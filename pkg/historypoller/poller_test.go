@@ -1,4 +1,4 @@
-package poller
+package historypoller
 
 import (
 	"os"

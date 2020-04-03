@@ -3,6 +3,7 @@ package utils
 import (
 	"fmt"
 	"os"
+	"os/exec"
 )
 
 // FileExists checks if a file exists and is not a directory before we
@@ -69,4 +70,28 @@ func ReadRestOfFile(file *os.File, seekPos int64) ([]byte, error) {
 		return nil, err
 	}
 	return restBuffer, nil
+}
+
+// FilesDiffer determines whether files at the given filepaths differ in content. This function
+// simply wraps the "cmp" unix command.
+func FilesDiffer(firstFilepath string, secondFilepath string) (bool, error) {
+	cmd := exec.Command("cmp", firstFilepath, secondFilepath)
+	_, err := cmd.Output()
+	if err != nil && err.Error() == "exit status 1" {
+		return true, nil
+	}
+	return false, err
+}
+
+// PositiveDiff returns only positive additions in a diff comparing the contents of files located
+// at filepaths currFilepath and newFilepath. No positive diffs will return an empty string
+func PositiveDiff(currFilepath string, newFilepath string) ([]byte, error) {
+	// diff -u $lastfilepath $newfilepath | grep -E "^\+" > $diffpath
+	cmd := exec.Command("diff", "-u", currFilepath, newFilepath, "|", "grep", `-E^\+`)
+	output, err := cmd.Output()
+	fmt.Println("output: ", output)
+	if err != nil {
+		return nil, err
+	}
+	return output, nil
 }

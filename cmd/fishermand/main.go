@@ -11,5 +11,5 @@ func main() {
 		panic(err)
 	}
 	fisherman := fisherman.NewFisherman(cfg)
-	fisherman.StartPolling()
+	fisherman.Start()
 }

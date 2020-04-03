@@ -204,5 +204,4 @@ func TestFilesDiffer_WhenDifferent_True(t *testing.T) {
 	if !res {
 		t.Error("Failed by returning no diff")
 	}
-
 }

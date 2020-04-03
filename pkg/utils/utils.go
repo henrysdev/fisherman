@@ -89,6 +89,7 @@ func PositiveDiff(currFilepath string, newFilepath string) ([]byte, error) {
 	// diff -u $lastfilepath $newfilepath | grep -E "^\+" > $diffpath
 	cmd := exec.Command("diff", "-u", currFilepath, newFilepath, "|", "grep", `-E^\+`)
 	output, err := cmd.Output()
+	fmt.Println("output: ", output)
 	if err != nil {
 		return nil, err
 	}

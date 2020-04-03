@@ -1,56 +1,61 @@
 package fisherman
 
 import (
-	"fmt"
-	"time"
-
 	"github.com/pkg/errors"
 
+	"github.com/henrysdev/fisherman/pkg/client"
+	"github.com/henrysdev/fisherman/pkg/cmdpipeline"
 	"github.com/henrysdev/fisherman/pkg/config"
-	"github.com/henrysdev/fisherman/pkg/poller"
 )
 
 // API for interacting with Fisherman
 type API interface {
-	Init() error
-	StartPolling() error
-	StopPolling() error
-	/*
-		ViewHistory() (History, error)
-		ViewTimeline() (Timeline, error)
+	Start() error
+	/*:
+	ViewHistory() (History, error)
+	ViewTimeline() (Timeline, error)
 	*/
 }
 
 // Fisherman contains necessary data for top level API methods
 type Fisherman struct {
-	Config *config.Config
-	Poller *poller.Poller
+	Config   *config.Config
+	Consumer *cmdpipeline.Consumer
+	Client   *client.Dispatcher
 }
 
-// NewFisherman returns an instantiated Fisherman struct
+// NewFisherman returns a new instance of Fisherman
 func NewFisherman(cfg *config.Config) *Fisherman {
+	buffer := cmdpipeline.NewBuffer()
+	client := client.NewDispatcher()
+	consumer := cmdpipeline.NewConsumer(
+		cfg.HistoryFile,
+		buffer,
+		client,
+		cfg.UpdateFrequency,
+		cfg.MaxCmdsPerUpdate,
+	)
 	return &Fisherman{
-		Config: cfg,
-		// TODO have a find seekPos function (wont always be 0!)
-		Poller: poller.NewPoller(cfg.HistoryFile, 0),
+		Config:   cfg,
+		Consumer: consumer,
+		Client:   client,
 	}
 }
 
-// StartPolling sends message to start continuously polling for changes on the fish history file
-func (f *Fisherman) StartPolling() error {
-	for {
-		records, err := f.Poller.Poll()
-		if err != nil {
-			return errors.Wrap(err, "StartPolling failed")
-		}
-		fmt.Println("records: ", records)
-		time.Sleep(time.Duration(f.Config.PollRate) * time.Millisecond)
-	}
-	return nil
-}
+// Start should be called immediately after instantiation
+func (f *Fisherman) Start() error {
 
-// StopPolling sends message to stop polling for changes on the fish history file
-func (f *Fisherman) StopPolling() error {
-	fmt.Println("StopPolling Called!")
-	return nil
+	// Setup command consumer
+	if err := f.Consumer.Setup(); err != nil {
+		return errors.Wrap(err, "Fisherman failed to setup Consumer")
+	}
+
+	// Spawn off async processes
+	errorChan := make(chan error)
+	defer close(errorChan)
+
+	// Start listening for commands
+	go f.Consumer.Listen(errorChan)
+
+	return <-errorChan
 }

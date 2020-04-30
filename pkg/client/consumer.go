@@ -1,12 +1,9 @@
-package cmdpipeline
+package client
 
 import (
 	"os/exec"
 	"strings"
 	"time"
-
-	"github.com/henrysdev/fisherman/pkg/client"
-	"github.com/henrysdev/fisherman/pkg/common"
 )
 
 // ConsumerAPI provides an API for interacting with
@@ -14,14 +11,14 @@ import (
 type ConsumerAPI interface {
 	Setup() error
 	Listen()
-	bytesToCommandRecord(cmd string) *common.CommandRecord
+	bytesToCommandRecord(cmd string) *CommandRecord
 }
 
 // Consumer represents the state of a command consumer
 type Consumer struct {
 	buffer           *Buffer
 	fifoPipe         string
-	client           *client.Dispatcher
+	client           *Dispatcher
 	lastUpdateTime   *time.Time
 	msBetweenUpdates int64
 	maxCmdsPerUpdate int
@@ -31,7 +28,7 @@ type Consumer struct {
 func NewConsumer(
 	fifoPipe string,
 	buffer *Buffer,
-	client *client.Dispatcher,
+	client *Dispatcher,
 	msBetweenUpdates int64,
 	maxCmdsPerUpdate int,
 ) *Consumer {
@@ -76,7 +73,7 @@ func (c *Consumer) Listen(errorChan chan error) {
 		// Check if command buffer is ready to push to server
 		currTime := time.Now()
 		elapsedMs := currTime.Sub(*c.lastUpdateTime).Nanoseconds() / 1000000
-		if !c.buffer.IsEmpty() && elapsedMs > c.msBetweenUpdates {
+		if elapsedMs > c.msBetweenUpdates {
 			commands := c.buffer.Take(c.maxCmdsPerUpdate)
 			c.client.SendCmdHistoryUpdate(commands)
 			c.lastUpdateTime = &currTime
@@ -86,11 +83,11 @@ func (c *Consumer) Listen(errorChan chan error) {
 
 // Listen continuously polls for new bash commands sent
 // over a fifo pipe written to from the preexec hook
-func (c *Consumer) bytesToCommandRecord(cmdbytes []byte) *common.CommandRecord {
+func (c *Consumer) bytesToCommandRecord(cmdbytes []byte) *CommandRecord {
 	// TODO return a Command datatype
 	cmdStr := strings.TrimSpace(string(cmdbytes))
 	timestamp := time.Now().UnixNano() / 1000000
-	return &common.CommandRecord{
+	return &CommandRecord{
 		Command:   cmdStr,
 		Timestamp: timestamp,
 	}

@@ -1,20 +1,16 @@
-package cmdpipeline
-
-import (
-	"github.com/henrysdev/fisherman/pkg/common"
-)
+package client
 
 // BufferAPI provides an API for buffering command records before
 // they are sent to their destination.
 type BufferAPI interface {
 	PushCommand(cmd string)
 	IsEmpty() bool
-	Take(n int) []*common.CommandRecord
+	Take(n int) []*CommandRecord
 }
 
 // Buffer represents the state of the buffer
 type Buffer struct {
-	commands []*common.CommandRecord
+	commands []*CommandRecord
 }
 
 // NewBuffer creates a new buffer instance
@@ -23,12 +19,12 @@ func NewBuffer() *Buffer {
 }
 
 // PushCommand appends a command to the current buffer
-func (b *Buffer) PushCommand(cmd *common.CommandRecord) {
+func (b *Buffer) PushCommand(cmd *CommandRecord) {
 	b.commands = append(b.commands, cmd)
 }
 
 // Take returns the n oldest commands available
-func (b *Buffer) Take(n int) []*common.CommandRecord {
+func (b *Buffer) Take(n int) []*CommandRecord {
 	if n > len(b.commands) {
 		n = len(b.commands)
 	}

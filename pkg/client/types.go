@@ -1,4 +1,4 @@
-package common
+package client
 
 // CommandRecord is the type that represents a local command history record
 type CommandRecord struct {

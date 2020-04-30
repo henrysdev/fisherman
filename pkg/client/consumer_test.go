@@ -1,4 +1,4 @@
-package cmdpipeline
+package client
 
 import (
 	"errors"

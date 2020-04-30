@@ -6,13 +6,11 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
-
-	"github.com/henrysdev/fisherman/pkg/common"
 )
 
-// API provides an API for interacting with the client request dispatcher
-type API interface {
-	SendCmdHistoryUpdate(commands []*common.CommandRecord)
+// DispatchAPI provides an API for interacting with the client request dispatcher
+type DispatchAPI interface {
+	SendCmdHistoryUpdate(commands []*CommandRecord)
 }
 
 // Dispatcher represents the state of the client request dispatcher
@@ -28,11 +26,11 @@ func NewDispatcher() *Dispatcher {
 }
 
 // SendCmdHistoryUpdate sends a message to the server with any new command records
-func (c *Dispatcher) SendCmdHistoryUpdate(commands []*common.CommandRecord) error {
-	fmt.Println("commands to send to server: ", commands)
+func (c *Dispatcher) SendCmdHistoryUpdate(commands []*CommandRecord) error {
+	PrettyPrintCommands(commands)
 
 	// Form request
-	reqBody, err := json.Marshal(common.CommandHistoryUpdateBody{
+	reqBody, err := json.Marshal(CommandHistoryUpdateBody{
 		Commands: commands,
 	})
 	if err != nil {

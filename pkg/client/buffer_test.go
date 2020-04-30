@@ -1,14 +1,12 @@
-package cmdpipeline
+package client
 
 import (
 	"testing"
 	"time"
-
-	"github.com/henrysdev/fisherman/pkg/common"
 )
 
 var (
-	testcmd = &common.CommandRecord{
+	testcmd = &CommandRecord{
 		Command:   "f_)*ake command//",
 		Timestamp: time.Now().UnixNano() / 1000000,
 	}

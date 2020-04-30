@@ -1,15 +1,14 @@
 package main
 
 import (
-	"github.com/henrysdev/fisherman/pkg/config"
-	"github.com/henrysdev/fisherman/pkg/fisherman"
+	"github.com/henrysdev/fisherman/pkg/client"
 )
 
 func main() {
-	cfg, err := config.ParseFlags()
+	cfg, err := client.ParseFlags()
 	if err != nil {
 		panic(err)
 	}
-	fisherman := fisherman.NewFisherman(cfg)
+	fisherman := client.NewFisherman(cfg)
 	fisherman.Start()
 }

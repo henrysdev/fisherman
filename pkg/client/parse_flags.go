@@ -1,4 +1,4 @@
-package config
+package client
 
 import (
 	"flag"
@@ -15,7 +15,7 @@ type Config struct {
 func ParseFlags() (*Config, error) {
 	config := Config{}
 	flag.StringVar(&config.HistoryFile, "history_file", "fisherman_fifo", "fish history file location")
-	flag.Int64Var(&config.UpdateFrequency, "update_frequency", int64(0), "frequency to push new history to server (ms)")
+	flag.Int64Var(&config.UpdateFrequency, "update_frequency", int64(1000), "frequency to push new history to server (ms)")
 	flag.IntVar(&config.MaxCmdsPerUpdate, "max_cmds_per_update", 5, "max number of commands per payload sent to server")
 	return &config, nil
 }

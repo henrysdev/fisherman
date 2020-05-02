@@ -1,4 +1,4 @@
-package utils
+package client
 
 import (
 	"fmt"
@@ -94,4 +94,20 @@ func PositiveDiff(currFilepath string, newFilepath string) ([]byte, error) {
 		return nil, err
 	}
 	return output, nil
+}
+
+// PrettyPrintCommands prints out lists of commands formatted for convenient debugging
+func PrettyPrintCommands(commands []*ExecutionRecord) {
+	if len(commands) == 0 {
+		return
+	}
+	listStr := ""
+	n := len(commands)
+	for i := 0; i < len(commands)-1; i++ {
+		command := commands[i]
+		listStr += fmt.Sprintf("{ cmd:%v, err:%v, ts:%v }\n", command.Command.Line, command.Stderr.Line, command.Command.Timestamp)
+	}
+	listStr += fmt.Sprintf("{ cmd:%v, err:%v, ts:%v }", commands[n-1].Command.Line, commands[n-1].Stderr.Line, commands[n-1].Command.Timestamp)
+	wholeStr := fmt.Sprintf("[%v]\n", listStr)
+	fmt.Println(wholeStr)
 }

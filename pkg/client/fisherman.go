@@ -1,15 +1,11 @@
-package fisherman
+package client
 
 import (
 	"github.com/pkg/errors"
-
-	"github.com/henrysdev/fisherman/pkg/client"
-	"github.com/henrysdev/fisherman/pkg/cmdpipeline"
-	"github.com/henrysdev/fisherman/pkg/config"
 )
 
-// API for interacting with Fisherman
-type API interface {
+// FishermanAPI for interacting with Fisherman
+type FishermanAPI interface {
 	Start() error
 	/*:
 	ViewHistory() (History, error)
@@ -19,16 +15,16 @@ type API interface {
 
 // Fisherman contains necessary data for top level API methods
 type Fisherman struct {
-	Config   *config.Config
-	Consumer *cmdpipeline.Consumer
-	Client   *client.Dispatcher
+	Config   *Config
+	Consumer *Consumer
+	Client   *Dispatcher
 }
 
 // NewFisherman returns a new instance of Fisherman
-func NewFisherman(cfg *config.Config) *Fisherman {
-	buffer := cmdpipeline.NewBuffer()
-	client := client.NewDispatcher()
-	consumer := cmdpipeline.NewConsumer(
+func NewFisherman(cfg *Config) *Fisherman {
+	buffer := NewBuffer()
+	client := NewDispatcher()
+	consumer := NewConsumer(
 		cfg.HistoryFile,
 		buffer,
 		client,

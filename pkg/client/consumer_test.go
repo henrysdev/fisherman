@@ -7,7 +7,7 @@ import (
 )
 
 var (
-	fifoPipe         = "fakepipe"
+	fifoPipe         = "/tmp/fakepipe"
 	buffer           = NewBuffer()
 	errArbitrary     = errors.New("fake arbitrary error")
 	msBetweenUpdates = int64(1000)

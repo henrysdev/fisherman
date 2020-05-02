@@ -97,14 +97,17 @@ func PositiveDiff(currFilepath string, newFilepath string) ([]byte, error) {
 }
 
 // PrettyPrintCommands prints out lists of commands formatted for convenient debugging
-func PrettyPrintCommands(cmds []*CommandRecord) {
-	listStr := ""
-	n := len(cmds)
-	for i := 0; i < len(cmds)-1; i++ {
-		cmd := cmds[i]
-		listStr += fmt.Sprintf("{ %v, %v }\n", cmd.Command, cmd.Timestamp)
+func PrettyPrintCommands(commands []*ExecutionRecord) {
+	if len(commands) == 0 {
+		return
 	}
-	listStr += fmt.Sprintf("{ %v, %v }", cmds[n-1].Command, cmds[n-1].Timestamp)
+	listStr := ""
+	n := len(commands)
+	for i := 0; i < len(commands)-1; i++ {
+		command := commands[i]
+		listStr += fmt.Sprintf("{ cmd:%v, err:%v, ts:%v }\n", command.Command.Line, command.Stderr.Line, command.Command.Timestamp)
+	}
+	listStr += fmt.Sprintf("{ cmd:%v, err:%v, ts:%v }", commands[n-1].Command.Line, commands[n-1].Stderr.Line, commands[n-1].Command.Timestamp)
 	wholeStr := fmt.Sprintf("[%v]\n", listStr)
 	fmt.Println(wholeStr)
 }

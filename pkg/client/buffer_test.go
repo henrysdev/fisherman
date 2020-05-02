@@ -6,9 +6,15 @@ import (
 )
 
 var (
-	testcmd = &CommandRecord{
-		Command:   "f_)*ake command//",
-		Timestamp: time.Now().UnixNano() / 1000000,
+	testcmd = &ExecutionRecord{
+		Command: &Command{
+			Line:      "f_)*ake command//",
+			Timestamp: time.Now().UnixNano() / 1000000,
+		},
+		Stderr: &Stderr{
+			Line:      "f_)*ake command//",
+			Timestamp: time.Now().UnixNano() / 1000000,
+		},
 	}
 )
 
@@ -17,26 +23,26 @@ func TestNewBuffer(t *testing.T) {
 	buffer := NewBuffer()
 
 	// Assert
-	if len(buffer.commands) != 0 {
+	if len(buffer.elements) != 0 {
 		t.Error("Buffer is not equivalent to an empty buffer object")
 	}
 }
 
-func TestPushCommand(t *testing.T) {
+func TestPushExecutionRecord(t *testing.T) {
 	// Arrange
 	buffer := NewBuffer()
 
 	// Act
-	buffer.PushCommand(testcmd)
-	if len(buffer.commands) != 1 {
+	buffer.PushExecutionRecord(testcmd)
+	if len(buffer.elements) != 1 {
 		t.Error("Buffer commands should be of size 1")
 	}
-	buffer.PushCommand(testcmd)
-	buffer.PushCommand(testcmd)
-	buffer.PushCommand(testcmd)
+	buffer.PushExecutionRecord(testcmd)
+	buffer.PushExecutionRecord(testcmd)
+	buffer.PushExecutionRecord(testcmd)
 
 	// Assert
-	if len(buffer.commands) != 4 {
+	if len(buffer.elements) != 4 {
 		t.Error("Buffer commands should be of size 4")
 	}
 }
@@ -46,17 +52,17 @@ func TestTake_WhenInbounds(t *testing.T) {
 	buffer := NewBuffer()
 
 	// Act
-	buffer.PushCommand(testcmd)
-	buffer.PushCommand(testcmd)
-	buffer.PushCommand(testcmd)
-	buffer.PushCommand(testcmd)
+	buffer.PushExecutionRecord(testcmd)
+	buffer.PushExecutionRecord(testcmd)
+	buffer.PushExecutionRecord(testcmd)
+	buffer.PushExecutionRecord(testcmd)
 	cmds := buffer.Take(3)
 
 	// Assert
 	if len(cmds) != 3 {
 		t.Error("Returned commands should be of size 3")
 	}
-	if len(buffer.commands) != 1 {
+	if len(buffer.elements) != 1 {
 		t.Error("Buffer commands should be of size 1")
 	}
 }
@@ -66,10 +72,10 @@ func TestTake_WhenUnderbounds(t *testing.T) {
 	buffer := NewBuffer()
 
 	// Act
-	buffer.PushCommand(testcmd)
-	buffer.PushCommand(testcmd)
-	buffer.PushCommand(testcmd)
-	buffer.PushCommand(testcmd)
+	buffer.PushExecutionRecord(testcmd)
+	buffer.PushExecutionRecord(testcmd)
+	buffer.PushExecutionRecord(testcmd)
+	buffer.PushExecutionRecord(testcmd)
 	cmds := buffer.Take(-99)
 
 	// Assert
@@ -83,10 +89,10 @@ func TestTake_WhenOverbounds(t *testing.T) {
 	buffer := NewBuffer()
 
 	// Act
-	buffer.PushCommand(testcmd)
-	buffer.PushCommand(testcmd)
-	buffer.PushCommand(testcmd)
-	buffer.PushCommand(testcmd)
+	buffer.PushExecutionRecord(testcmd)
+	buffer.PushExecutionRecord(testcmd)
+	buffer.PushExecutionRecord(testcmd)
+	buffer.PushExecutionRecord(testcmd)
 	cmds := buffer.Take(999)
 
 	// Assert

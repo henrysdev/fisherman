@@ -3,14 +3,14 @@ package client
 // BufferAPI provides an API for buffering command records before
 // they are sent to their destination.
 type BufferAPI interface {
-	PushCommand(cmd string)
+	PushExecutionRecord(cmd string)
 	IsEmpty() bool
-	Take(n int) []*CommandRecord
+	Take(n int) []*ExecutionRecord
 }
 
 // Buffer represents the state of the buffer
 type Buffer struct {
-	commands []*CommandRecord
+	elements []*ExecutionRecord
 }
 
 // NewBuffer creates a new buffer instance
@@ -18,25 +18,25 @@ func NewBuffer() *Buffer {
 	return &Buffer{}
 }
 
-// PushCommand appends a command to the current buffer
-func (b *Buffer) PushCommand(cmd *CommandRecord) {
-	b.commands = append(b.commands, cmd)
+// PushExecutionRecord appends a command to the current buffer
+func (b *Buffer) PushExecutionRecord(cmd *ExecutionRecord) {
+	b.elements = append(b.elements, cmd)
 }
 
-// Take returns the n oldest commands available
-func (b *Buffer) Take(n int) []*CommandRecord {
-	if n > len(b.commands) {
-		n = len(b.commands)
+// Take returns the n oldest elements available
+func (b *Buffer) Take(n int) []*ExecutionRecord {
+	if n > len(b.elements) {
+		n = len(b.elements)
 	}
 	if n <= 0 {
 		return nil
 	}
-	cmds := b.commands[:n]
-	b.commands = b.commands[n:]
+	cmds := b.elements[:n]
+	b.elements = b.elements[n:]
 	return cmds
 }
 
-// IsEmpty returns whether or not the commands field is empty
+// IsEmpty returns whether or not the elements field is empty
 func (b *Buffer) IsEmpty() bool {
-	return len(b.commands) == 0
+	return len(b.elements) == 0
 }

@@ -10,7 +10,7 @@ import (
 
 // DispatchAPI provides an API for interacting with the client request dispatcher
 type DispatchAPI interface {
-	SendCmdHistoryUpdate(commands []*CommandRecord)
+	SendCmdHistoryUpdate(commands []*ExecutionRecord)
 }
 
 // Dispatcher represents the state of the client request dispatcher
@@ -26,7 +26,8 @@ func NewDispatcher() *Dispatcher {
 }
 
 // SendCmdHistoryUpdate sends a message to the server with any new command records
-func (c *Dispatcher) SendCmdHistoryUpdate(commands []*CommandRecord) error {
+func (c *Dispatcher) SendCmdHistoryUpdate(commands []*ExecutionRecord) error {
+
 	PrettyPrintCommands(commands)
 
 	// Form request

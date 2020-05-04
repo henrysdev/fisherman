@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/henrysdev/fisherman/pkg/client"
+	"github.com/henrysdev/fisherman/client/pkg/client"
 )
 
 func main() {

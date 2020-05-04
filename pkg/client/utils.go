@@ -111,3 +111,8 @@ func PrettyPrintCommands(commands []*ExecutionRecord) {
 	wholeStr := fmt.Sprintf("[%v]\n", listStr)
 	fmt.Println(wholeStr)
 }
+
+// RemoveFile removes the file descriptor at the provided location
+func RemoveFile(filename string) {
+	exec.Command("rm", filename).Output()
+}

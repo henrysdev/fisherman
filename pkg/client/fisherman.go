@@ -4,37 +4,33 @@ import (
 	"github.com/pkg/errors"
 )
 
-// FishermanAPI for interacting with Fisherman
+// FishermanAPI for interacting with Fisherman. This is the top level API for the client.
 type FishermanAPI interface {
 	Start() error
-	/*:
-	ViewHistory() (History, error)
-	ViewTimeline() (Timeline, error)
-	*/
 }
 
 // Fisherman contains necessary data for top level API methods
 type Fisherman struct {
-	Config   *Config
-	Consumer *Consumer
-	Client   *Dispatcher
+	Config     *Config
+	Consumer   *Consumer
+	Dispatcher *Dispatcher
 }
 
 // NewFisherman returns a new instance of Fisherman
 func NewFisherman(cfg *Config) *Fisherman {
 	buffer := NewBuffer()
-	client := NewDispatcher()
+	dispatcher := NewDispatcher()
 	consumer := NewConsumer(
-		cfg.HistoryFile,
+		cfg.FifoPipe,
 		buffer,
-		client,
+		dispatcher,
 		cfg.UpdateFrequency,
 		cfg.MaxCmdsPerUpdate,
 	)
 	return &Fisherman{
-		Config:   cfg,
-		Consumer: consumer,
-		Client:   client,
+		Config:     cfg,
+		Consumer:   consumer,
+		Dispatcher: dispatcher,
 	}
 }
 

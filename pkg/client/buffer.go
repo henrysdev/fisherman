@@ -1,7 +1,7 @@
 package client
 
-// BufferAPI provides an API for buffering command records before
-// they are sent to their destination.
+// BufferAPI provides an API for buffering command records before they are sent to their
+// destination. It acts as a queue for execution records to send to the server.
 type BufferAPI interface {
 	PushExecutionRecord(cmd string)
 	IsEmpty() bool
@@ -23,8 +23,8 @@ func (b *Buffer) PushExecutionRecord(cmd *ExecutionRecord) {
 	b.elements = append(b.elements, cmd)
 }
 
-// Take returns the n oldest elements available
-func (b *Buffer) Take(n int) []*ExecutionRecord {
+// TakeN returns the n oldest elements available
+func (b *Buffer) TakeN(n int) []*ExecutionRecord {
 	if n > len(b.elements) {
 		n = len(b.elements)
 	}

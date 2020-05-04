@@ -77,7 +77,7 @@ func (c *Consumer) Listen(errorChan chan error) {
 		currTime := time.Now()
 		elapsedMs := currTime.Sub(*c.lastUpdateTime).Nanoseconds() / 1000000
 		if !c.buffer.IsEmpty() && elapsedMs > c.msBetweenUpdates {
-			commands := c.buffer.Take(c.maxCmdsPerUpdate)
+			commands := c.buffer.TakeN(c.maxCmdsPerUpdate)
 			c.client.SendCmdHistoryUpdate(commands)
 			c.lastUpdateTime = &currTime
 		}

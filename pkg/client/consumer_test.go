@@ -56,7 +56,6 @@ func TestSetup_WhenExecError_Error(t *testing.T) {
 func TestListen_WhenNoExecError_Continues(t *testing.T) {
 	// Arrange
 	errorChan := make(chan error)
-	defer close(errorChan)
 
 	consumer := NewConsumer(fifoPipe, buffer, nil, msBetweenUpdates, maxCmdsPerUpdate)
 	consumer.Setup()

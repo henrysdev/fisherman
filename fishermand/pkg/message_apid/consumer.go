@@ -14,29 +14,28 @@ import (
 // http Client.
 type ConsumerAPI interface {
 	Setup() error
-	Listen()
-	processShellMessage(msgBytes []byte) error
+	Listen(errorChan chan error)
 }
 
 // Consumer represents the state of a command consumer
 type Consumer struct {
-	buffer           *Buffer
+	buffer           BufferAPI
 	fifoPipe         string
-	client           *http_client.Dispatcher
+	client           http_client.DispatchAPI
 	lastUpdateTime   *time.Time
 	msBetweenUpdates int64
 	maxCmdsPerUpdate int
-	handler          *MessageHandler
+	handler          HandlerAPI
 }
 
 // NewConsumer returns a new Consumer instance
 func NewConsumer(
 	fifoPipe string,
-	buffer *Buffer,
-	client *http_client.Dispatcher,
+	buffer BufferAPI,
+	client http_client.DispatchAPI,
 	msBetweenUpdates int64,
 	maxCmdsPerUpdate int,
-	handler *MessageHandler,
+	handler HandlerAPI,
 ) *Consumer {
 	currTime := time.Now()
 	return &Consumer{

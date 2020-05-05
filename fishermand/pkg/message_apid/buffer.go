@@ -6,9 +6,9 @@ import "github.com/henrysdev/fisherman/fishermand/pkg/common"
 // destination. It acts as a FIFO queue for holding execution records that have not yet been
 // sent to the server.
 type BufferAPI interface {
-	PushExecutionRecord(cmd string)
+	PushExecutionRecord(cmd *common.ExecutionRecord)
 	IsEmpty() bool
-	Take(n int) []*common.ExecutionRecord
+	TakeN(n int) []*common.ExecutionRecord
 }
 
 // Buffer represents the state of the buffer

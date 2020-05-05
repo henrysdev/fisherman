@@ -1,4 +1,4 @@
-package client
+package message_apid
 
 import (
 	"errors"

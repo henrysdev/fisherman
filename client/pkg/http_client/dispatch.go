@@ -1,4 +1,4 @@
-package client
+package http_client
 
 import (
 	"bytes"
@@ -6,11 +6,14 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
+
+	"github.com/henrysdev/fisherman/client/pkg/common"
+	"github.com/henrysdev/fisherman/client/pkg/utils"
 )
 
 // DispatchAPI provides an API for interacting with the client request dispatcher
 type DispatchAPI interface {
-	SendCmdHistoryUpdate(commands []*ExecutionRecord)
+	SendCmdHistoryUpdate(commands []*common.ExecutionRecord)
 }
 
 // Dispatcher represents the state of the client request dispatcher
@@ -26,12 +29,12 @@ func NewDispatcher() *Dispatcher {
 }
 
 // SendCmdHistoryUpdate sends a message to the server with any new command records
-func (c *Dispatcher) SendCmdHistoryUpdate(commands []*ExecutionRecord) error {
+func (c *Dispatcher) SendCmdHistoryUpdate(commands []*common.ExecutionRecord) error {
 
-	PrettyPrintCommands(commands)
+	utils.PrettyPrintCommands(commands)
 
 	// Form request
-	reqBody, err := json.Marshal(CommandHistoryUpdateBody{
+	reqBody, err := json.Marshal(common.CommandHistoryUpdateBody{
 		Commands: commands,
 	})
 	if err != nil {

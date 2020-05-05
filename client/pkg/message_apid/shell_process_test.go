@@ -1,13 +1,15 @@
-package client
+package message_apid
 
 import (
 	"testing"
 	"time"
+
+	"github.com/henrysdev/fisherman/client/pkg/common"
 )
 
 var (
 	pid     = "1234"
-	command = &Command{
+	command = &common.Command{
 		Line:      "abc123",
 		Timestamp: time.Now().UnixNano() / 1000000,
 	}
@@ -28,11 +30,11 @@ func TestNewShellProcess(t *testing.T) {
 
 func TestPushStderr(t *testing.T) {
 	// Arrange
-	stderr := &Stderr{
+	stderr := &common.Stderr{
 		Line:      "err output",
 		Timestamp: time.Now().UnixNano() / 1000000,
 	}
-	expectedRecord := &ExecutionRecord{
+	expectedRecord := &common.ExecutionRecord{
 		Command: command,
 		Stderr:  stderr,
 	}
@@ -58,7 +60,7 @@ func TestPushStderr(t *testing.T) {
 
 func TestPushStderr_WhenNilCommand_Nil(t *testing.T) {
 	// Arrange
-	stderr := &Stderr{
+	stderr := &common.Stderr{
 		Line:      "err output",
 		Timestamp: time.Now().UnixNano() / 1000000,
 	}

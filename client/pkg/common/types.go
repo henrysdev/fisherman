@@ -1,17 +1,17 @@
-package client
+package common
 
 // Enum for message type
-type messagetype int
+type Messagetype int
 
 const (
-	COMMAND messagetype = iota
+	COMMAND Messagetype = iota
 	STDERR
 )
 
 // ShellMessage represents a message passed to the consumer from a shell process
 type ShellMessage struct {
 	PID             string
-	MessageType     messagetype
+	MessageType     Messagetype
 	MessageContents string
 	Timestamp       int64
 }

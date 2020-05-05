@@ -1,17 +1,19 @@
-package client
+package message_apid
 
 import (
 	"testing"
 	"time"
+
+	"github.com/henrysdev/fisherman/client/pkg/common"
 )
 
 var (
-	testrecord = &ExecutionRecord{
-		Command: &Command{
+	testrecord = &common.ExecutionRecord{
+		Command: &common.Command{
 			Line:      "f_)*ake command//",
 			Timestamp: time.Now().UnixNano() / 1000000,
 		},
-		Stderr: &Stderr{
+		Stderr: &common.Stderr{
 			Line:      "f_)*ake command//",
 			Timestamp: time.Now().UnixNano() / 1000000,
 		},

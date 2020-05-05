@@ -1,7 +1,10 @@
-package client
+package application
 
 import (
 	"github.com/pkg/errors"
+
+	"github.com/henrysdev/fisherman/client/pkg/http_client"
+	"github.com/henrysdev/fisherman/client/pkg/message_apid"
 )
 
 // FishermanAPI for interacting with Fisherman. This is the top level API for the client.
@@ -12,15 +15,15 @@ type FishermanAPI interface {
 // Fisherman contains necessary data for top level API methods
 type Fisherman struct {
 	Config     *Config
-	Consumer   *Consumer
-	Dispatcher *Dispatcher
+	Consumer   *message_apid.Consumer
+	Dispatcher *http_client.Dispatcher
 }
 
 // NewFisherman returns a new instance of Fisherman
 func NewFisherman(cfg *Config) *Fisherman {
-	buffer := NewBuffer()
-	dispatcher := NewDispatcher()
-	consumer := NewConsumer(
+	buffer := message_apid.NewBuffer()
+	dispatcher := http_client.NewDispatcher()
+	consumer := message_apid.NewConsumer(
 		cfg.FifoPipe,
 		buffer,
 		dispatcher,
@@ -42,7 +45,6 @@ func (f *Fisherman) Start() error {
 		return errors.Wrap(err, "Fisherman failed to setup Consumer")
 	}
 
-	// Spawn off async processes
 	errorChan := make(chan error)
 	defer close(errorChan)
 

@@ -1,17 +1,17 @@
-package client
+package common
 
-// Enum for message type
-type messagetype int
+// Messagetype enum for all supported IPC messages from shell processes and/or the CLI
+type Messagetype int
 
 const (
-	COMMAND messagetype = iota
+	COMMAND Messagetype = iota
 	STDERR
 )
 
 // ShellMessage represents a message passed to the consumer from a shell process
 type ShellMessage struct {
 	PID             string
-	MessageType     messagetype
+	MessageType     Messagetype
 	MessageContents string
 	Timestamp       int64
 }
@@ -30,6 +30,7 @@ type Stderr struct {
 
 // ExecutionRecord is the type that represents a local command history record
 type ExecutionRecord struct {
+	PID     string
 	Command *Command
 	Stderr  *Stderr
 }

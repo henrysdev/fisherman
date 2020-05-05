@@ -1,13 +1,15 @@
-package client
+package message_apid
 
 import (
 	"testing"
 	"time"
+
+	"github.com/henrysdev/fisherman/client/pkg/common"
 )
 
 var (
 	pid     = "1234"
-	command = &Command{
+	command = &common.Command{
 		Line:      "abc123",
 		Timestamp: time.Now().UnixNano() / 1000000,
 	}
@@ -28,11 +30,11 @@ func TestNewShellProcess(t *testing.T) {
 
 func TestPushStderr(t *testing.T) {
 	// Arrange
-	stderr := &Stderr{
+	stderr := &common.Stderr{
 		Line:      "err output",
 		Timestamp: time.Now().UnixNano() / 1000000,
 	}
-	expectedRecord := &ExecutionRecord{
+	expectedRecord := &common.ExecutionRecord{
 		Command: command,
 		Stderr:  stderr,
 	}
@@ -58,7 +60,7 @@ func TestPushStderr(t *testing.T) {
 
 func TestPushStderr_WhenNilCommand_Nil(t *testing.T) {
 	// Arrange
-	stderr := &Stderr{
+	stderr := &common.Stderr{
 		Line:      "err output",
 		Timestamp: time.Now().UnixNano() / 1000000,
 	}
@@ -72,43 +74,3 @@ func TestPushStderr_WhenNilCommand_Nil(t *testing.T) {
 		t.Error("expected record to be nil")
 	}
 }
-
-// // ShellProcessAPI exposes an API for interacting with shell process state
-// type ShellProcessAPI interface {
-// 	PushCommand(command *Command)
-// 	PushStderror(stderr *Stderr) *ExecutionRecord
-// }
-
-// // ShellProcess represents the state of a shell the program receives messages from
-// type ShellProcess struct {
-// 	PID     string
-// 	Command *Command
-// 	Stderr  *Stderr
-// }
-
-// // NewShellProcess returns a new ShellProcess instance
-// func NewShellProcess(pid string, command *Command) *ShellProcess {
-// 	return &ShellProcess{
-// 		PID:     pid,
-// 		Command: command,
-// 	}
-// }
-
-// // PushCommand stores the command
-// func (s *ShellProcess) PushCommand(command *Command) {
-// 	s.Command = command
-// }
-
-// // PushStderr stores the command and return an execution record
-// func (s *ShellProcess) PushStderr(stderr *Stderr) *ExecutionRecord {
-// 	if s.Command == nil {
-// 		return nil
-// 	}
-// 	record := &ExecutionRecord{
-// 		Command: s.Command,
-// 		Stderr:  stderr,
-// 	}
-// 	s.Command = nil
-// 	s.Stderr = nil
-// 	return record
-// }

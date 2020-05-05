@@ -1,16 +1,19 @@
-package client
+package message_apid
 
-// BufferAPI provides an API for buffering command records before
-// they are sent to their destination.
+import "github.com/henrysdev/fisherman/client/pkg/common"
+
+// BufferAPI provides an API for buffering command records before they are sent to their
+// destination. It acts as a FIFO queue for holding execution records that have not yet been
+// sent to the server.
 type BufferAPI interface {
 	PushExecutionRecord(cmd string)
 	IsEmpty() bool
-	Take(n int) []*ExecutionRecord
+	Take(n int) []*common.ExecutionRecord
 }
 
 // Buffer represents the state of the buffer
 type Buffer struct {
-	elements []*ExecutionRecord
+	elements []*common.ExecutionRecord
 }
 
 // NewBuffer creates a new buffer instance
@@ -19,12 +22,12 @@ func NewBuffer() *Buffer {
 }
 
 // PushExecutionRecord appends a command to the current buffer
-func (b *Buffer) PushExecutionRecord(cmd *ExecutionRecord) {
+func (b *Buffer) PushExecutionRecord(cmd *common.ExecutionRecord) {
 	b.elements = append(b.elements, cmd)
 }
 
-// Take returns the n oldest elements available
-func (b *Buffer) Take(n int) []*ExecutionRecord {
+// TakeN returns the n oldest elements available
+func (b *Buffer) TakeN(n int) []*common.ExecutionRecord {
 	if n > len(b.elements) {
 		n = len(b.elements)
 	}

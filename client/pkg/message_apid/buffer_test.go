@@ -1,17 +1,19 @@
-package client
+package message_apid
 
 import (
 	"testing"
 	"time"
+
+	"github.com/henrysdev/fisherman/client/pkg/common"
 )
 
 var (
-	testcmd = &ExecutionRecord{
-		Command: &Command{
+	testrecord = &common.ExecutionRecord{
+		Command: &common.Command{
 			Line:      "f_)*ake command//",
 			Timestamp: time.Now().UnixNano() / 1000000,
 		},
-		Stderr: &Stderr{
+		Stderr: &common.Stderr{
 			Line:      "f_)*ake command//",
 			Timestamp: time.Now().UnixNano() / 1000000,
 		},
@@ -33,13 +35,13 @@ func TestPushExecutionRecord(t *testing.T) {
 	buffer := NewBuffer()
 
 	// Act
-	buffer.PushExecutionRecord(testcmd)
+	buffer.PushExecutionRecord(testrecord)
 	if len(buffer.elements) != 1 {
 		t.Error("Buffer commands should be of size 1")
 	}
-	buffer.PushExecutionRecord(testcmd)
-	buffer.PushExecutionRecord(testcmd)
-	buffer.PushExecutionRecord(testcmd)
+	buffer.PushExecutionRecord(testrecord)
+	buffer.PushExecutionRecord(testrecord)
+	buffer.PushExecutionRecord(testrecord)
 
 	// Assert
 	if len(buffer.elements) != 4 {
@@ -52,11 +54,11 @@ func TestTake_WhenInbounds(t *testing.T) {
 	buffer := NewBuffer()
 
 	// Act
-	buffer.PushExecutionRecord(testcmd)
-	buffer.PushExecutionRecord(testcmd)
-	buffer.PushExecutionRecord(testcmd)
-	buffer.PushExecutionRecord(testcmd)
-	cmds := buffer.Take(3)
+	buffer.PushExecutionRecord(testrecord)
+	buffer.PushExecutionRecord(testrecord)
+	buffer.PushExecutionRecord(testrecord)
+	buffer.PushExecutionRecord(testrecord)
+	cmds := buffer.TakeN(3)
 
 	// Assert
 	if len(cmds) != 3 {
@@ -72,11 +74,11 @@ func TestTake_WhenUnderbounds(t *testing.T) {
 	buffer := NewBuffer()
 
 	// Act
-	buffer.PushExecutionRecord(testcmd)
-	buffer.PushExecutionRecord(testcmd)
-	buffer.PushExecutionRecord(testcmd)
-	buffer.PushExecutionRecord(testcmd)
-	cmds := buffer.Take(-99)
+	buffer.PushExecutionRecord(testrecord)
+	buffer.PushExecutionRecord(testrecord)
+	buffer.PushExecutionRecord(testrecord)
+	buffer.PushExecutionRecord(testrecord)
+	cmds := buffer.TakeN(-99)
 
 	// Assert
 	if len(cmds) != 0 {
@@ -89,11 +91,11 @@ func TestTake_WhenOverbounds(t *testing.T) {
 	buffer := NewBuffer()
 
 	// Act
-	buffer.PushExecutionRecord(testcmd)
-	buffer.PushExecutionRecord(testcmd)
-	buffer.PushExecutionRecord(testcmd)
-	buffer.PushExecutionRecord(testcmd)
-	cmds := buffer.Take(999)
+	buffer.PushExecutionRecord(testrecord)
+	buffer.PushExecutionRecord(testrecord)
+	buffer.PushExecutionRecord(testrecord)
+	buffer.PushExecutionRecord(testrecord)
+	cmds := buffer.TakeN(999)
 
 	// Assert
 	if len(cmds) != 4 {

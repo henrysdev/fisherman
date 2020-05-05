@@ -1,4 +1,4 @@
-package client
+package message_apid
 
 import (
 	"errors"
@@ -9,6 +9,7 @@ import (
 var (
 	fifoPipe         = "/tmp/fakepipe"
 	buffer           = NewBuffer()
+	handler          = NewMessageHandler()
 	errArbitrary     = errors.New("fake arbitrary error")
 	msBetweenUpdates = int64(1000)
 	maxCmdsPerUpdate = 5
@@ -16,7 +17,7 @@ var (
 
 func TestNewConsumer(t *testing.T) {
 	// Arrange
-	consumer := NewConsumer(fifoPipe, buffer, nil, msBetweenUpdates, maxCmdsPerUpdate)
+	consumer := NewConsumer(fifoPipe, buffer, nil, msBetweenUpdates, maxCmdsPerUpdate, handler)
 
 	// Assert
 	if consumer.fifoPipe != fifoPipe {
@@ -29,7 +30,7 @@ func TestNewConsumer(t *testing.T) {
 
 func TestSetup_WhenNoExecError_NoError(t *testing.T) {
 	// Arrange
-	consumer := NewConsumer(fifoPipe, buffer, nil, msBetweenUpdates, maxCmdsPerUpdate)
+	consumer := NewConsumer(fifoPipe, buffer, nil, msBetweenUpdates, maxCmdsPerUpdate, handler)
 
 	// Act
 	err := consumer.Setup()
@@ -42,7 +43,7 @@ func TestSetup_WhenNoExecError_NoError(t *testing.T) {
 
 func TestSetup_WhenExecError_Error(t *testing.T) {
 	// Arrange
-	consumer := NewConsumer("", buffer, nil, msBetweenUpdates, maxCmdsPerUpdate)
+	consumer := NewConsumer("", buffer, nil, msBetweenUpdates, maxCmdsPerUpdate, handler)
 
 	// Act
 	err := consumer.Setup()
@@ -56,9 +57,8 @@ func TestSetup_WhenExecError_Error(t *testing.T) {
 func TestListen_WhenNoExecError_Continues(t *testing.T) {
 	// Arrange
 	errorChan := make(chan error)
-	defer close(errorChan)
 
-	consumer := NewConsumer(fifoPipe, buffer, nil, msBetweenUpdates, maxCmdsPerUpdate)
+	consumer := NewConsumer(fifoPipe, buffer, nil, msBetweenUpdates, maxCmdsPerUpdate, handler)
 	consumer.Setup()
 
 	// Act
@@ -77,7 +77,7 @@ func TestListen_WhenExecError_Exits(t *testing.T) {
 	errorChan := make(chan error)
 	defer close(errorChan)
 
-	consumer := NewConsumer("", buffer, nil, msBetweenUpdates, maxCmdsPerUpdate)
+	consumer := NewConsumer("", buffer, nil, msBetweenUpdates, maxCmdsPerUpdate, handler)
 	consumer.Setup()
 
 	// Act

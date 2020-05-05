@@ -31,13 +31,13 @@ jobs:
         fi
 
     - name: Build fishermand
-      run: go build -v fishermand/cmd/fishermand/main.go .
+      run: go build -v fishermand/cmd/fishermand/main.go
     
     - name: Test fishermand
-      run: go test -v fishermand/cmd/fishermand/main.go .
+      run: go test -v fishermand/cmd/fishermand/main.go
     
     - name: Build cli
-      run: go build -v cli/cmd/fishermancli/main.go .
+      run: go build -v cli/cmd/fishermancli/main.go
     
     - name: Test cli
-      run: go test -v cli/cmd/fishermancli/main.go .
+      run: go test -v cli/cmd/fishermancli/main.go

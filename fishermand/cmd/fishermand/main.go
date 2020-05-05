@@ -1,9 +1,12 @@
 package main
 
 import (
+	"os"
+
 	"github.com/henrysdev/fisherman/fishermand/pkg/application"
 )
 
 func main() {
-	application.Run("/Users/henry.warren/go/src/github.com/henrysdev/fisherman/fishermand/config/config.yml")
+	configFilepath := os.Getenv("FISHERMAN_PATH")
+	application.Run(configFilepath)
 }

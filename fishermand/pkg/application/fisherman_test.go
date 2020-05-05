@@ -6,7 +6,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/henrysdev/fisherman/fishermand/pkg/http_client"
+	httpclient "github.com/henrysdev/fisherman/fishermand/pkg/http_client"
 )
 
 var (
@@ -57,7 +57,7 @@ func TestStartFisherman(t *testing.T) {
 		UpdateFrequency:  int64(0),
 		MaxCmdsPerUpdate: 1,
 	}
-	dispatcher := http_client.NewDispatcher()
+	dispatcher := httpclient.NewDispatcher()
 	consumer := &MockConsumer{
 		spoofMode: "delay",
 		delay:     delay,
@@ -86,7 +86,7 @@ func TestStartFisherman_WhenConsumerSetupError_ShouldError(t *testing.T) {
 		UpdateFrequency:  int64(0),
 		MaxCmdsPerUpdate: 1,
 	}
-	dispatcher := http_client.NewDispatcher()
+	dispatcher := httpclient.NewDispatcher()
 	consumer := &MockConsumer{
 		spoofMode: "setup_error",
 	}
@@ -113,7 +113,7 @@ func TestStartFisherman_WhenConsumerListenError_ShouldError(t *testing.T) {
 		UpdateFrequency:  int64(0),
 		MaxCmdsPerUpdate: 1,
 	}
-	dispatcher := http_client.NewDispatcher()
+	dispatcher := httpclient.NewDispatcher()
 	consumer := &MockConsumer{
 		spoofMode: "error",
 	}

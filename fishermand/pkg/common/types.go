@@ -4,7 +4,9 @@ package common
 type Messagetype int
 
 const (
+	// COMMAND message from shell
 	COMMAND Messagetype = iota
+	// STDERR message from shell
 	STDERR
 )
 

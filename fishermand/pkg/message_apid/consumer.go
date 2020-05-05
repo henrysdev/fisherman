@@ -1,10 +1,10 @@
-package message_apid
+package messageapid
 
 import (
 	"os/exec"
 	"time"
 
-	"github.com/henrysdev/fisherman/fishermand/pkg/http_client"
+	httpclient "github.com/henrysdev/fisherman/fishermand/pkg/http_client"
 )
 
 // ConsumerAPI allows for interacting with the message listener. The consumer works by
@@ -21,7 +21,7 @@ type ConsumerAPI interface {
 type Consumer struct {
 	buffer           BufferAPI
 	fifoPipe         string
-	client           http_client.DispatchAPI
+	client           httpclient.DispatchAPI
 	lastUpdateTime   *time.Time
 	msBetweenUpdates int64
 	maxCmdsPerUpdate int
@@ -32,7 +32,7 @@ type Consumer struct {
 func NewConsumer(
 	fifoPipe string,
 	buffer BufferAPI,
-	client http_client.DispatchAPI,
+	client httpclient.DispatchAPI,
 	msBetweenUpdates int64,
 	maxCmdsPerUpdate int,
 	handler HandlerAPI,

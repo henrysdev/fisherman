@@ -1,4 +1,4 @@
-package message_apid
+package messageapid
 
 import (
 	"errors"

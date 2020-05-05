@@ -1,6 +1,6 @@
 package common
 
-// Enum for message type
+// Messagetype enum for all supported IPC messages from shell processes and/or the CLI
 type Messagetype int
 
 const (
@@ -30,6 +30,7 @@ type Stderr struct {
 
 // ExecutionRecord is the type that represents a local command history record
 type ExecutionRecord struct {
+	PID     string
 	Command *Command
 	Stderr  *Stderr
 }

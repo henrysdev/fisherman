@@ -30,12 +30,13 @@ func (s *ShellProcess) PushCommand(command *common.Command) {
 	s.Command = command
 }
 
-// PushStderr stores the command and return an execution record
+// PushStderr stores the stderr and returns an execution record
 func (s *ShellProcess) PushStderr(stderr *common.Stderr) *common.ExecutionRecord {
 	if s.Command == nil {
 		return nil
 	}
 	record := &common.ExecutionRecord{
+		PID:     s.PID,
 		Command: s.Command,
 		Stderr:  stderr,
 	}

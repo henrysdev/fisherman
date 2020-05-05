@@ -1,6 +1,7 @@
 pid="$$"
 output_pipe="/tmp/fisherman/cmdpipe"
 stderr_buff="/tmp/fisherman/${pid}_stderr"
+bin_name="fishermand"
 
 function startcapture() {
     exec 2> >(tee $stderr_buff)
@@ -9,7 +10,7 @@ function startcapture() {
 trap "rm ${stderr_buff}" EXIT
 
 function printbefore () {
-if [ -p "$output_pipe" ]
+if pgrep -x "$bin_name" > /dev/null && [ -p "$output_pipe" ]
     then
         if [ ! -f "$stderr_buff" ]
             then
@@ -22,7 +23,7 @@ fi
 }
 
 function printafter () {
-if [ -p "$output_pipe" ]
+if pgrep -x "$bin_name" > /dev/null && [ -p "$output_pipe" ]
     then
         if [ ! -f "$stderr_buff" ]
             then
@@ -31,7 +32,8 @@ if [ -p "$output_pipe" ]
                 err="$(cat $stderr_buff)"
                 err_msg="${pid} 1 ${err}"
                 echo "$err_msg" > "$output_pipe"
-                :> "$stderr_buff"
+                pkill -x tee "$stderr_buff"
+                rm "$stderr_buff"
         fi
 fi
 }

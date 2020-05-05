@@ -49,13 +49,6 @@ func Run() {
 		syscall.SIGXFSZ)
 
 	go func() {
-		defer func() {
-			if r := recover(); r != nil {
-				err := r.(error)
-				fmt.Println("Error: ", err)
-				cleanup(cfg)
-			}
-		}()
 		fisherman := NewFisherman(cfg)
 		fisherman.Start()
 	}()

@@ -3,7 +3,8 @@ package message_apid
 import "github.com/henrysdev/fisherman/client/pkg/common"
 
 // BufferAPI provides an API for buffering command records before they are sent to their
-// destination. It acts as a queue for execution records to send to the server.
+// destination. It acts as a FIFO queue for holding execution records that have not yet been
+// sent to the server.
 type BufferAPI interface {
 	PushExecutionRecord(cmd string)
 	IsEmpty() bool

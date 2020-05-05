@@ -1,17 +1,17 @@
 package message_apid
 
 import (
-	"fmt"
 	"os/exec"
-	"strconv"
-	"strings"
 	"time"
 
-	"github.com/henrysdev/fisherman/client/pkg/common"
 	"github.com/henrysdev/fisherman/client/pkg/http_client"
 )
 
-// ConsumerAPI provides an API for interacting with the command listener
+// ConsumerAPI allows for interacting with the message listener. The consumer works by
+// pulling from the read end of a unix named pipe (FIFO pipe) that messages are written to by
+// both local shell processes as well as the accompanying fisherman CLI tool. These messages are
+// handled to the MessageHandler and then queued in the Buffer before being dispatched by the
+// http Client.
 type ConsumerAPI interface {
 	Setup() error
 	Listen()
@@ -26,7 +26,7 @@ type Consumer struct {
 	lastUpdateTime   *time.Time
 	msBetweenUpdates int64
 	maxCmdsPerUpdate int
-	shellProcesses   map[string]*ShellProcess
+	handler          *MessageHandler
 }
 
 // NewConsumer returns a new Consumer instance
@@ -36,6 +36,7 @@ func NewConsumer(
 	client *http_client.Dispatcher,
 	msBetweenUpdates int64,
 	maxCmdsPerUpdate int,
+	handler *MessageHandler,
 ) *Consumer {
 	currTime := time.Now()
 	return &Consumer{
@@ -45,7 +46,7 @@ func NewConsumer(
 		lastUpdateTime:   &currTime,
 		msBetweenUpdates: msBetweenUpdates,
 		maxCmdsPerUpdate: maxCmdsPerUpdate,
-		shellProcesses:   make(map[string]*ShellProcess),
+		handler:          handler,
 	}
 }
 
@@ -60,8 +61,8 @@ func (c *Consumer) Setup() error {
 	return nil
 }
 
-// Listen continuously polls for new bash commands sent over a fifo pipe written to from the
-// preexec hook. Send updates to server when appropriate.
+// Listen continuously polls for new IPC messages sent over a fifo pipe written to from local
+// shell processes and the CLI. Send updates to server when appropriate.
 func (c *Consumer) Listen(errorChan chan error) {
 	for {
 		resp, err := exec.Command("cat", c.fifoPipe).Output()
@@ -70,7 +71,7 @@ func (c *Consumer) Listen(errorChan chan error) {
 			return
 		}
 
-		err = c.processShellMessage(resp)
+		err = c.handler.ProcessMessage(resp, c.buffer)
 		if err != nil {
 			errorChan <- err
 			return
@@ -85,67 +86,4 @@ func (c *Consumer) Listen(errorChan chan error) {
 			c.lastUpdateTime = &currTime
 		}
 	}
-}
-
-func (c *Consumer) processShellMessage(msgBytes []byte) error {
-	shellMessage, err := bytesToMessage(msgBytes)
-	if err != nil {
-		fmt.Println(common.ShellMessageFormatError(err.Error()))
-		return nil
-	}
-
-	// Route message based on message type
-	pid := shellMessage.PID
-	switch shellMessage.MessageType {
-	case common.COMMAND:
-		command := &common.Command{
-			Line:      shellMessage.MessageContents,
-			Timestamp: shellMessage.Timestamp,
-		}
-		if _, found := c.shellProcesses[pid]; found {
-			c.shellProcesses[pid].PushCommand(command)
-		} else {
-			c.shellProcesses[pid] = NewShellProcess(pid, command)
-		}
-		return nil
-	case common.STDERR:
-		stderr := &common.Stderr{
-			Line:      shellMessage.MessageContents,
-			Timestamp: shellMessage.Timestamp,
-		}
-		if _, found := c.shellProcesses[pid]; found {
-			if record := c.shellProcesses[pid].PushStderr(stderr); record != nil {
-				c.buffer.PushExecutionRecord(record)
-			}
-		}
-		return nil
-	default:
-		return common.ShellMessageFormatError(string(msgBytes))
-	}
-}
-
-// Validate message structure and read into ShellMessage struct
-func bytesToMessage(msgBytes []byte) (*common.ShellMessage, error) {
-	msgStr := strings.TrimSpace(string(msgBytes))
-	parts := strings.SplitN(msgStr, " ", 3)
-
-	// Handle case where message content is empty
-	if len(parts) == 2 {
-		parts = append(parts, "")
-	}
-	if len(parts) != 3 {
-		return nil, fmt.Errorf("Invalid message %s", msgStr)
-	}
-	msgType, err := strconv.Atoi(parts[1])
-	if err != nil {
-		return nil, err
-	}
-	shellMessage := &common.ShellMessage{
-		PID:             parts[0],
-		MessageType:     common.Messagetype(msgType),
-		MessageContents: parts[2],
-		Timestamp:       time.Now().UnixNano() / 1000000,
-	}
-
-	return shellMessage, nil
 }

@@ -1,6 +1,7 @@
 package utils
 
 import (
+	"encoding/json"
 	"fmt"
 	"os"
 	"os/exec"
@@ -21,18 +22,8 @@ func FileExists(filename string) bool {
 
 // PrettyPrintCommands prints out lists of commands formatted for convenient debugging
 func PrettyPrintCommands(commands []*common.ExecutionRecord) {
-	if len(commands) == 0 {
-		return
-	}
-	listStr := ""
-	n := len(commands)
-	for i := 0; i < len(commands)-1; i++ {
-		command := commands[i]
-		listStr += fmt.Sprintf("{ cmd:%v, err:%v, ts:%v }\n", command.Command.Line, command.Stderr.Line, command.Command.Timestamp)
-	}
-	listStr += fmt.Sprintf("{ cmd:%v, err:%v, ts:%v }", commands[n-1].Command.Line, commands[n-1].Stderr.Line, commands[n-1].Command.Timestamp)
-	wholeStr := fmt.Sprintf("[%v]\n", listStr)
-	fmt.Println(wholeStr)
+	b, _ := json.MarshalIndent(commands, "", " ")
+	fmt.Println(string(b))
 }
 
 // RemoveFile removes the file descriptor at the provided location

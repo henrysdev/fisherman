@@ -23,12 +23,14 @@ type Fisherman struct {
 func NewFisherman(cfg *Config) *Fisherman {
 	buffer := message_apid.NewBuffer()
 	dispatcher := http_client.NewDispatcher()
+	handler := message_apid.NewMessageHandler()
 	consumer := message_apid.NewConsumer(
 		cfg.FifoPipe,
 		buffer,
 		dispatcher,
 		cfg.UpdateFrequency,
 		cfg.MaxCmdsPerUpdate,
+		handler,
 	)
 	return &Fisherman{
 		Config:     cfg,
@@ -48,7 +50,7 @@ func (f *Fisherman) Start() error {
 	errorChan := make(chan error)
 	defer close(errorChan)
 
-	// Start listening for commands
+	// Spawn consumer to listen for messages
 	go f.Consumer.Listen(errorChan)
 
 	return <-errorChan

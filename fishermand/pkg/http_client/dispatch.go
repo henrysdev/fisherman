@@ -3,8 +3,8 @@ package http_client
 import (
 	"bytes"
 	"encoding/json"
-	"fmt"
 	"io/ioutil"
+	"log"
 	"net/http"
 
 	"github.com/henrysdev/fisherman/fishermand/pkg/common"
@@ -55,6 +55,6 @@ func (c *Dispatcher) SendCmdHistoryUpdate(commands []*common.ExecutionRecord) er
 	if err != nil {
 		return err
 	}
-	fmt.Println(string(respBody))
+	log.Println(string(respBody))
 	return nil
 }

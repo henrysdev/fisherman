@@ -2,6 +2,7 @@ package message_apid
 
 import (
 	"fmt"
+	"log"
 	"strconv"
 	"strings"
 	"time"
@@ -36,7 +37,7 @@ func NewMessageHandler() *MessageHandler {
 func (m *MessageHandler) ProcessMessage(msgBytes []byte, buffer BufferAPI) error {
 	shellMessage, err := bytesToMessage(msgBytes)
 	if err != nil {
-		fmt.Println(common.ShellMessageFormatError(err.Error()))
+		log.Println(common.ShellMessageFormatError(err.Error()))
 		return nil
 	}
 

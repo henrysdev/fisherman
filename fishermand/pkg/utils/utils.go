@@ -2,7 +2,7 @@ package utils
 
 import (
 	"encoding/json"
-	"fmt"
+	"log"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -23,7 +23,7 @@ func FileExists(filename string) bool {
 // PrettyPrintCommands prints out lists of commands formatted for convenient debugging
 func PrettyPrintCommands(commands []*common.ExecutionRecord) {
 	b, _ := json.MarshalIndent(commands, "", " ")
-	fmt.Println(string(b))
+	log.Println(string(b))
 }
 
 // RemoveFile removes the file descriptor at the provided location

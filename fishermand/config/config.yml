@@ -1,4 +1,4 @@
 temp_dir: /tmp/fisherman/
 fifo_pipe: /tmp/fisherman/cmdpipe
 update_frequency: 0
-max_cmds_per_update: 0
+max_cmds_per_update: 1

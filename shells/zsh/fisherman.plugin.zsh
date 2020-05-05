@@ -7,9 +7,14 @@ function startcapture() {
     exec 2> >(tee $stderr_buff)
 }
 
+function endcapture() {
+    pkill -x tee "$stderr_buff"
+    rm "$stderr_buff"
+}
+
 trap "rm ${stderr_buff}" EXIT
 
-function printbefore () {
+function writecmd () {
 if pgrep -x "$bin_name" > /dev/null && [ -p "$output_pipe" ]
     then
         if [ ! -f "$stderr_buff" ]
@@ -22,7 +27,7 @@ if pgrep -x "$bin_name" > /dev/null && [ -p "$output_pipe" ]
 fi
 }
 
-function printafter () {
+function writestderr () {
 if pgrep -x "$bin_name" > /dev/null && [ -p "$output_pipe" ]
     then
         if [ ! -f "$stderr_buff" ]
@@ -32,13 +37,12 @@ if pgrep -x "$bin_name" > /dev/null && [ -p "$output_pipe" ]
                 err="$(cat $stderr_buff)"
                 err_msg="${pid} 1 ${err}"
                 echo "$err_msg" > "$output_pipe"
-                pkill -x tee "$stderr_buff"
-                rm "$stderr_buff"
+                endcapture
         fi
 fi
 }
 
 autoload -Uz  add-zsh-hook
 
-add-zsh-hook preexec printbefore
-add-zsh-hook precmd printafter
+add-zsh-hook preexec writecmd
+add-zsh-hook precmd writestderr

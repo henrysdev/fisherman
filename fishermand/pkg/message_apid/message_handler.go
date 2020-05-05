@@ -13,9 +13,9 @@ import (
 // received from the shell processes pushing messages to the unix named pipe (FIFO pipe) that
 // fishermand reads from.
 type HandlerAPI interface {
-	ProcessMessage(msgBytes []byte, buffer *Buffer) error
-	handleCommand()
-	handleStderr()
+	ProcessMessage(msgBytes []byte, buffer BufferAPI) error
+	handleCommand(shellMessage *common.ShellMessage, buffer BufferAPI)
+	handleStderr(shellMessage *common.ShellMessage, buffer BufferAPI)
 }
 
 // MessageHandler represents the state of the handler which includes a lookup table for
@@ -33,7 +33,7 @@ func NewMessageHandler() *MessageHandler {
 
 // ProcessMessage validates and parses an IPC message into the appropriate structure and routes
 // the message based on the message type
-func (m *MessageHandler) ProcessMessage(msgBytes []byte, buffer *Buffer) error {
+func (m *MessageHandler) ProcessMessage(msgBytes []byte, buffer BufferAPI) error {
 	shellMessage, err := bytesToMessage(msgBytes)
 	if err != nil {
 		fmt.Println(common.ShellMessageFormatError(err.Error()))
@@ -80,7 +80,7 @@ func bytesToMessage(msgBytes []byte) (*common.ShellMessage, error) {
 
 func (m *MessageHandler) handleCommand(
 	shellMessage *common.ShellMessage,
-	buffer *Buffer,
+	buffer BufferAPI,
 ) {
 	pid := shellMessage.PID
 	command := &common.Command{
@@ -98,7 +98,7 @@ func (m *MessageHandler) handleCommand(
 
 func (m *MessageHandler) handleStderr(
 	shellMessage *common.ShellMessage,
-	buffer *Buffer,
+	buffer BufferAPI,
 ) {
 	pid := shellMessage.PID
 	stderr := &common.Stderr{

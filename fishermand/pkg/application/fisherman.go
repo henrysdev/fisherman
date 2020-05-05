@@ -15,8 +15,8 @@ type FishermanAPI interface {
 // Fisherman contains necessary data for top level API methods
 type Fisherman struct {
 	Config     *Config
-	Consumer   *message_apid.Consumer
-	Dispatcher *http_client.Dispatcher
+	Consumer   message_apid.ConsumerAPI
+	Dispatcher http_client.DispatchAPI
 }
 
 // NewFisherman returns a new instance of Fisherman

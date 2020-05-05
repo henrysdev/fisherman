@@ -13,7 +13,7 @@ import (
 
 // DispatchAPI provides an API for interacting with the client request dispatcher
 type DispatchAPI interface {
-	SendCmdHistoryUpdate(commands []*common.ExecutionRecord)
+	SendCmdHistoryUpdate(commands []*common.ExecutionRecord) error
 }
 
 // Dispatcher represents the state of the client request dispatcher

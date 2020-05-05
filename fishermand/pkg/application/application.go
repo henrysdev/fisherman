@@ -1,7 +1,7 @@
 package application
 
 import (
-	"fmt"
+	"log"
 	"os"
 	"os/signal"
 	"syscall"
@@ -11,13 +11,21 @@ import (
 	"github.com/henrysdev/fisherman/fishermand/pkg/utils"
 )
 
-// Run starts the fisherman daemon process and handles system signal events
-func Run() {
-	cfg, err := ParseConfig()
+// Run reads the config, starts the fisherman daemon process, and starts trap for system signals
+func Run(cfgFilepath string) {
+	cfg, err := ParseConfig(cfgFilepath)
 	if err != nil {
 		panic(err)
 	}
+	go func() {
+		fisherman := NewFisherman(cfg)
+		fisherman.Start()
+	}()
+	trap(cfg)
+}
 
+// Trap watches for signals in order to exit gracefully with cleanup
+func trap(cfg *Config) {
 	killSignal := make(chan os.Signal, 1)
 	signal.Notify(killSignal,
 		syscall.SIGABRT,
@@ -48,26 +56,21 @@ func Run() {
 		syscall.SIGUSR2,
 		syscall.SIGXFSZ)
 
-	go func() {
-		fisherman := NewFisherman(cfg)
-		fisherman.Start()
-	}()
-
 	sig := <-killSignal
-	fmt.Println("Exiting with signal: ", sig)
+	log.Println("Exiting with signal: ", sig)
 
 	cleanup(cfg)
 	os.Exit(1)
 }
 
+// Cleanup destroys temp files that are created
 func cleanup(cfg *Config) {
 	// Destroy fifo pipe (very important to prevent deadlock with shell!)
 	if err := utils.RemoveFile(cfg.FifoPipe); err != nil {
-		fmt.Println(errors.Wrap(err, "Failed to remove fifo pipe! "))
+		log.Fatal(errors.Wrap(err, "Failed to remove fifo pipe "))
 	}
-
 	// Destroy any/all files in temp directory
 	if err := utils.CleanDirectory(cfg.TempDirectory); err != nil {
-		fmt.Println(errors.Wrap(err, "Failed to remove some temp files"))
+		log.Fatal(errors.Wrap(err, "Failed to remove some temp files"))
 	}
 }

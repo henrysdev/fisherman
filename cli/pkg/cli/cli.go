@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"os/exec"
 
-	"github.com/henrysdev/fisherman/client/pkg/utils"
+	"github.com/henrysdev/fisherman/fishermand/pkg/utils"
 )
 
 // ClientAPI provides the API for interacting with the fisherman daemon process

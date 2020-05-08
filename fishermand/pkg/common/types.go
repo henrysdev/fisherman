@@ -8,14 +8,21 @@ const (
 	COMMAND Messagetype = iota
 	// STDERR message from shell
 	STDERR
+	// STOP from the CLI
+	STOP
 )
 
-// ShellMessage represents a message passed to the consumer from a shell process
+// ShellMessage represents a message passed to the listener from a shell process
 type ShellMessage struct {
 	PID             string
 	MessageType     Messagetype
 	MessageContents string
 	Timestamp       int64
+}
+
+// SystemMessage represents a message passed to the system pipe from the CLI
+type SystemMessage struct {
+	MessageType Messagetype
 }
 
 // Command represents a command run from the shell

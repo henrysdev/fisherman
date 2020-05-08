@@ -6,8 +6,6 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
-
-	"github.com/henrysdev/fisherman/fishermand/pkg/common"
 )
 
 // FileExists checks if a file exists and is not a directory before we
@@ -20,9 +18,9 @@ func FileExists(filename string) bool {
 	return !info.IsDir()
 }
 
-// PrettyPrintCommands prints out lists of commands formatted for convenient debugging
-func PrettyPrintCommands(commands []*common.ExecutionRecord) {
-	b, _ := json.MarshalIndent(commands, "", " ")
+// PrettyPrint prints out arbitrary interface as pretty JSON
+func PrettyPrint(structure interface{}) {
+	b, _ := json.MarshalIndent(structure, "", " ")
 	log.Println(string(b))
 }
 

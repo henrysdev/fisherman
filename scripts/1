@@ -1,0 +1,25 @@
+precmd called
+]2;henry.warren@C02XT14CJGH7]1;..erman/scripts]7;file://C02XT14CJGH7/Users/henry.warren/go/src/github.com/henrysdev/fisherman/scripts[?1h=[?1l>preexec called
+]2;python3 -c 'raise ValueError("__")'cl  File "<strprecmd called
+]2;henry.warren@C02XT14CJGH7]1;..erman/scripts]7;file://C02XT14CJGH7/Users/henry.  File "<string>", line 1
+    raise ValueError("__")cl
+                           ^
+SyntaxError: invalid syntax
+  File "<string>", line 1
+    raise ValueError("__")cl
+                           ^
+SyntaxError: invalid syntax
+rm: /tmp/fisherman/65077_stderr: No such file or directory
+ripts[?1h=[?1l>preexec called
+]2;python3 -c 'raise ValueError("__")'cl]1;python3precmd called
+]2;henry.warren@C02XT14CJGH7]1;..erman/scripts]7;file://C02XT14CJGH7/Users/henry.warren/go/src/github.com/henrysdev/fisherman/scripts[?1h=[?1l>preexec called
+]2;ls -G]1;ls1
+2
+asdf
+fishermand
+install.sh
+linux_build.sh
+local_dev.sh
+run.sh
+precmd called
+]2;henry.warren@C02XT14CJGH7]1;..erman/scripts]7;file://C02XT14CJGH7/Users/henry.warren/go/src/github.com/henrysdev/fisherman/scripts[?1h=

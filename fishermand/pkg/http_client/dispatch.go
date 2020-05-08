@@ -31,7 +31,7 @@ func NewDispatcher() *Dispatcher {
 // SendCmdHistoryUpdate sends a message to the server with any new command records
 func (c *Dispatcher) SendCmdHistoryUpdate(commands []*common.ExecutionRecord) error {
 
-	utils.PrettyPrintCommands(commands)
+	utils.PrettyPrint(commands)
 
 	// Form request
 	reqBody, err := json.Marshal(common.CommandHistoryUpdateBody{

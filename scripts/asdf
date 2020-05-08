@@ -1,5 +1,0 @@
-  File "<string>", line 1
-    raise ValueError("__")cl
-                           ^
-SyntaxError: invalid syntax
-rm: /tmp/fisherman/63878_stderr: No such file or directory

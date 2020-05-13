@@ -1,6 +1,7 @@
 package application
 
 import (
+	"context"
 	"fmt"
 	"log"
 	"os"
@@ -10,37 +11,39 @@ import (
 	"github.com/pkg/errors"
 
 	httpclient "github.com/henrysdev/fisherman/fishermand/pkg/http_client"
+	messagepipes "github.com/henrysdev/fisherman/fishermand/pkg/message_pipes"
 	shellpipe "github.com/henrysdev/fisherman/fishermand/pkg/message_pipes/shell_pipe"
-	systempipe "github.com/henrysdev/fisherman/fishermand/pkg/message_pipes/system_pipe"
 	"github.com/henrysdev/fisherman/fishermand/pkg/utils"
 )
 
-// Run reads the config, starts the fisherman daemon process, and starts trap for system signals
-func Run(cfgFilepath string) {
+// Init reads in the config file, initializes pipes, and starts running the client
+func Init(cfgFilepath string) {
 	// Read in config
 	cfg, err := ParseConfig(cfgFilepath)
 	utils.PrettyPrint(cfg)
 	if err != nil {
 		panic(err)
 	}
-
-	// Start fifo pipe processes
-	go initPipes(cfg)
-
-	// Block for os level exit signals
-	trap(cfg)
-}
-
-func initPipes(cfg *Config) error {
-	// Initialize system pipe
-	systemPipe := systempipe.NewSystemListener(
-		cfg.SystemPipe,
-		systempipe.NewSystemMessageHandler(),
-	)
-	if err := systemPipe.Setup(); err != nil {
-		return errors.Wrap(err, "failed to setup system pipe")
+	shellPipe, err := initPipe(cfg)
+	if err != nil {
+		panic(err)
 	}
 
+	run(cfg, shellPipe)
+}
+
+// run reads the config, starts the fisherman daemon process, and starts trap for system signals
+func run(cfg *Config, shellPipe *shellpipe.ShellListener) {
+	ctx, cancel := context.WithCancel(context.Background())
+	// Start polling the read end of the shell pipe
+	supervisePipe(ctx, cancel, cfg, shellPipe, cfg.ShellPipe)
+
+	// Block for OS level exit signals
+	trap(cfg, cancel)
+}
+
+// initPipe instantiates the unix fifo pipe as well as their listeners
+func initPipe(cfg *Config) (*shellpipe.ShellListener, error) {
 	// Initialize shell pipe
 	buffer := shellpipe.NewBuffer()
 	shellPipe := shellpipe.NewShellListener(
@@ -52,59 +55,45 @@ func initPipes(cfg *Config) error {
 		shellpipe.NewShellMessageHandler(buffer),
 	)
 	if err := shellPipe.Setup(); err != nil {
-		return errors.Wrap(err, "failed to setup shell pipe")
+		return nil, errors.Wrap(err, "failed to setup shell pipe")
 	}
 
-	return supervisePipes(systemPipe, shellPipe, cfg)
+	return shellPipe, nil
 }
 
-func supervisePipes(
-	systemPipe *systempipe.SystemListener,
-	shellPipe *shellpipe.ShellListener,
-	cfg *Config,
-) error {
-	// Start polling the read end of the system pipe
+// supervisePipe starts a pipe process as a goroutine that logs and restarts itself when an
+// expected error occurs. On a runtime panic error, the program will crash gracefully, cleaning
+// up temp files on the way out
+func supervisePipe(
+	ctx context.Context,
+	cancel context.CancelFunc,
+	cfg *Config, pipe messagepipes.ListenerAPI,
+	pipeName string,
+) {
 	go func() {
-		defer panicHandler(cfg)
-		// Log bubbled up errors
+		defer func() {
+			if r := recover(); r != nil {
+				gracefulExit(cfg, cancel, r)
+			}
+		}()
 		for {
-			if err := systemPipe.Listen(); err != nil {
-				log.Fatal(errors.Wrap(err, "system pipe listen failed"))
+			if err := pipe.Listen(); err != nil {
+				log.Println(
+					errors.Wrap(
+						err, fmt.Sprintf("listen failed for %s", pipeName)))
+			}
+			select {
+			case <-ctx.Done():
+				log.Println(fmt.Sprintf("listener %s exiting...", pipeName))
+				return
+			default:
 			}
 		}
 	}()
-
-	// Start polling the read end of the shell pipe
-	go func() {
-		defer panicHandler(cfg)
-		// Log bubbled up errors
-		for {
-			if err := shellPipe.Listen(); err != nil {
-				log.Println(errors.Wrap(err, "shell pipe listen failed"))
-			}
-		}
-	}()
-
-	return nil
-}
-
-func panicHandler(cfg *Config) {
-	if r := recover(); r != nil {
-		gracefulExit(cfg, r)
-	}
-}
-
-func gracefulExit(cfg *Config, reason interface{}) {
-	log.Println("shutting down...")
-	cleanup(cfg)
-	if reason != nil {
-		log.Fatal(fmt.Sprintf("crashed due to %v", reason))
-	}
-	os.Exit(1)
 }
 
 // Trap watches for signals in order to exit gracefully with cleanup
-func trap(cfg *Config) {
+func trap(cfg *Config, cancel context.CancelFunc) {
 	killSignal := make(chan os.Signal, 1)
 	signal.Notify(killSignal,
 		syscall.SIGABRT,
@@ -133,25 +122,16 @@ func trap(cfg *Config) {
 		syscall.SIGUSR2,
 		syscall.SIGXFSZ)
 
-	sig := <-killSignal
-	err := fmt.Errorf("encountered system signal: %v", sig)
-	log.Println(err)
-	gracefulExit(cfg, err)
+	errSignal := fmt.Errorf("encountered system signal: %v", <-killSignal)
+	gracefulExit(cfg, cancel, errSignal)
 }
 
-// Cleanup destroys temp files that are created
-func cleanup(cfg *Config) {
-	log.Println("deleting system pipe...")
-	if err := utils.RemoveFile(cfg.SystemPipe); err != nil {
-		log.Fatal(errors.Wrap(err, "failed to remove system pipe "))
+// gracefulExit cleans up all temp files before the program exits
+func gracefulExit(cfg *Config, cancel context.CancelFunc, reason interface{}) {
+	cancel()
+	if reason != nil {
+		log.Println(fmt.Sprintf("exiting due to: %v", reason))
 	}
-	// Destroy shell and system pipe (very important to prevent deadlock with shell!)
-	log.Println("deleting shell pipe...")
-	if err := utils.RemoveFile(cfg.ShellPipe); err != nil {
-		log.Fatal(errors.Wrap(err, "failed to remove shell pipe "))
-	}
-	// Destroy any/all files in temp directory
-	if err := utils.CleanDirectory(cfg.TempDirectory); err != nil {
-		log.Fatal(errors.Wrap(err, "failed to remove some temp files"))
-	}
+
+	os.Exit(1)
 }

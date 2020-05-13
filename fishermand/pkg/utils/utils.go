@@ -8,8 +8,8 @@ import (
 	"path/filepath"
 )
 
-// FileExists checks if a file exists and is not a directory before we
-// try using it to prevent further errors.
+// FileExists checks if a file exists and is not a directory before we try using it to prevent
+// further errors.
 func FileExists(filename string) bool {
 	info, err := os.Stat(filename)
 	if os.IsNotExist(err) {
@@ -41,6 +41,15 @@ func CleanDirectory(directory string) error {
 		if err != nil {
 			return err
 		}
+	}
+	return nil
+}
+
+// KillMatchingProcesses uses pkill to kill all matching processes by exact name and arguments
+func KillMatchingProcesses(pattern string) error {
+	_, err := exec.Command("pkill", "-x", "-f", pattern).Output()
+	if err != nil {
+		return err
 	}
 	return nil
 }

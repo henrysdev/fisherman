@@ -12,7 +12,6 @@ import (
 type Config struct {
 	TempDirectory    string `yaml:"temp_dir"`            // location of temp files
 	ShellPipe        string `yaml:"shell_pipe"`          // name of shell fifo pipe
-	SystemPipe       string `yaml:"system_pipe"`         // name of system fifo pipe
 	UpdateFrequency  int64  `yaml:"update_frequency"`    // frequency to pushing to server (ms)
 	MaxCmdsPerUpdate int    `yaml:"max_cmds_per_update"` // max number of commands per payload sent to server
 }

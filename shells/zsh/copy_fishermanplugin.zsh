@@ -1,6 +1,6 @@
 pid="$$"
-output_pipe="/tmp/fisherman/cmdpipe"
-stderr_buff="/tmp/fisherman/${pid}_stderr"
+output_pipe="/tmp/.fisherman/cmdpipe"
+stderr_buff="/tmp/.fisherman/${pid}_stderr"
 bin_name="fishermand"
 
 # Createds the temp proces to redirect stderr output to appropriate temp file

@@ -27,7 +27,6 @@ func TestParseConfig(t *testing.T) {
 	expectedCfg := &Config{
 		TempDirectory:    ".",
 		ShellPipe:        ".",
-		SystemPipe:       ".",
 		UpdateFrequency:  int64(0),
 		MaxCmdsPerUpdate: 1,
 	}
@@ -46,9 +45,6 @@ func TestParseConfig(t *testing.T) {
 	}
 	if expectedCfg.ShellPipe != cfg.ShellPipe {
 		t.Errorf("ShellPipe not the same")
-	}
-	if expectedCfg.SystemPipe != cfg.SystemPipe {
-		t.Errorf("SystemPipe not the same")
 	}
 	if expectedCfg.UpdateFrequency != cfg.UpdateFrequency {
 		t.Errorf("UpdateFrequency not the same")

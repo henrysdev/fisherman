@@ -9,5 +9,5 @@ import (
 func main() {
 	// TODO use $HOME
 	configFilepath := os.Getenv("FISHERMAN_PATH")
-	application.Run(configFilepath)
+	application.Init(configFilepath)
 }

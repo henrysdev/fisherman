@@ -7,7 +7,7 @@ import (
 
 var (
 	fifoPipe         = "/tmp/fakepipe"
-	handler          = NewSystemMessageHandler()
+	handler          = NewSystemMessageHandler(func(reason interface{}) {})
 	errArbitrary     = errors.New("fake arbitrary error")
 	msBetweenUpdates = int64(1000)
 	maxCmdsPerUpdate = 5

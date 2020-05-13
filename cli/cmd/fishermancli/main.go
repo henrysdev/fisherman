@@ -7,27 +7,31 @@ import (
 	"github.com/henrysdev/fisherman/cli/pkg/cli"
 )
 
+const (
+	shPipe  = "/tmp/fisherman/cmdpipe"
+	sysPipe = "/tmp/fisherman/syspipe"
+	binLoc  = "/Users/henry.warren/go/src/github.com/henrysdev/fisherman/scripts/run.sh"
+)
+
 func main() {
 	action := flag.String("action", "", "[start | stop | restart]")
-	fifoPipe := flag.String("pipe", "/tmp/fisherman_fifo", "location of fifo pipe")
+	shellPipe := flag.String("shell_pipe", shPipe, "location of shell pipe")
+	systemPipe := flag.String("system_pipe", sysPipe, "location of system pipe")
+	binLocation := flag.String("bin_location", binLoc, "location of daemon binary")
 	flag.Parse()
 
 	client := &cli.CLI{
-		FifoPipe: *fifoPipe,
+		ShellPipe:   *shellPipe,
+		SystemPipe:  *systemPipe,
+		BinLocation: *binLocation,
 	}
 	switch *action {
 	case "start":
-		if err := client.Start(); err != nil {
-			fmt.Println(err)
-		}
+		client.Start()
 	case "stop":
-		if err := client.Stop(); err != nil {
-			fmt.Println(err)
-		}
+		client.Stop()
 	case "restart":
-		if err := client.Restart(); err != nil {
-			fmt.Println(err)
-		}
+		client.Restart()
 	default:
 		fmt.Println(fmt.Errorf("Unrecognized option %v", *action))
 	}

@@ -6,7 +6,7 @@ import (
 
 func TestProcessMessage(t *testing.T) {
 	// Arrange
-	handler := NewSystemMessageHandler()
+	handler := NewSystemMessageHandler(func(reason interface{}) {})
 	stopMsg := []byte(`2`)
 
 	// Act
@@ -20,7 +20,7 @@ func TestProcessMessage(t *testing.T) {
 
 func TestProcessMessage_WhenInvalid_Error(t *testing.T) {
 	// Arrange
-	handler := NewSystemMessageHandler()
+	handler := NewSystemMessageHandler(func(reason interface{}) {})
 	stopMsg := []byte(`189237`)
 
 	// Act

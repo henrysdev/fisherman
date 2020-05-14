@@ -35,9 +35,3 @@ jobs:
     
     - name: Test fishermand
       run: go test ./fishermand/...
-    
-    - name: Build cli
-      run: go build -v cli/cmd/fishermancli/main.go
-    
-    - name: Test cli
-      run: go test ./cli/...

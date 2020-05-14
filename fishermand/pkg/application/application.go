@@ -129,6 +129,10 @@ func trap(cfg *Config, cancel context.CancelFunc) {
 // gracefulExit cleans up all temp files before the program exits
 func gracefulExit(cfg *Config, cancel context.CancelFunc, reason interface{}) {
 	cancel()
+	log.Println("cleaning up tmp directory...")
+	if err := utils.CleanDirectory(cfg.TempDirectory); err != nil {
+		log.Fatal(err)
+	}
 	if reason != nil {
 		log.Println(fmt.Sprintf("exiting due to: %v", reason))
 	}

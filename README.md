@@ -12,3 +12,15 @@ The `fishermand` process is a long-running background application that listens f
 
 ## Shell plugin
 The shell plugin is responsible for publishing messages to the pipe that `fishermand` reads from. The shell plugin sends every command entered by the user along with any respective `STDERR` output while being completely out of the way of the user. The messages sent include the command, error output, and PID of the shell.
+
+# Development
+## Quick Start
+### Add the ZSH Plugin
+Add the following line to your `.zshrc` file:
+1. `source <path_to_your_local_clone_of_this_repo>/shells/zsh/fisherman.plugin.zsh` (before other source commands? after?)
+2. Open up a new shell to refresh changes
+
+### Run the daemon in dev mode
+Get the `fishermand` process running as follows:
+1. Open up a shell at the repository root and run `./scripts/rundev.sh` - this will start the `fishermand` client printing to stdout
+2. Open up additional shells. Any commands you enter as well as any errors these commands produce should be observably logged in the first shell. 

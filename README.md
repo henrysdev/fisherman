@@ -17,7 +17,7 @@ The shell plugin is responsible for publishing messages to the pipe that `fisher
 ## Quick Start
 ### Add the ZSH Plugin
 Add the following line to your `.zshrc` file:
-1. `source <path_to_your_local_clone_of_this_repo>/shells/zsh/fisherman.plugin.zsh` (before other source commands? after?)
+1. `source <path_to_your_local_clone_of_this_repo>/shells/zsh/fisherman.plugin.zsh`
 2. Open up a new shell to refresh changes
 
 ### Run the daemon in dev mode

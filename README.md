@@ -15,12 +15,15 @@ The shell plugin is responsible for publishing messages to the pipe that `fisher
 
 # Development
 ## Quick Start
+### Install the Go package
+Assuming you have Go installed, run the following command: `go get -u github.com/henrysdev/fisherman/...`
+
 ### Add the ZSH Plugin
 Add the following line to your `.zshrc` file:
-1. `source <path_to_your_local_clone_of_this_repo>/shells/zsh/fisherman.plugin.zsh`
+1. `source $HOME/go/src/github.com/fisherman/shells/zsh/fisherman.plugin.zsh`
 2. Open up a new shell to refresh changes
 
 ### Run the daemon in dev mode
 Get the `fishermand` process running as follows:
-1. Open up a shell at the repository root and run `./scripts/rundev.sh` - this will start the `fishermand` client printing to stdout
+1. Open up a shell at the repository root and run `sudo ./scripts/rundev.sh` - this will start the `fishermand` client printing to stdout
 2. Open up additional shells. Any commands you enter as well as any errors these commands produce should be observably logged in the first shell. 

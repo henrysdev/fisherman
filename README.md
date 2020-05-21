@@ -4,8 +4,9 @@
 Fisherman is a project that aims to promote developer productivity and knowledge sharing among teams by collecting, analyzing, and correlating historical shell activity.
 
 There are three main parts to the client program
-1. The `fishermand` local server
+1. The `fishermand` client daemon
 2. The shell plugin (`ZSH` currently supported)
+3. Backend web server (TODO)
 
 ## Fishermand
 The `fishermand` process is a long-running background application that listens for incoming commands/errors from all active shells that you are using via IPC messages over a unix fifo pipe. The messages that this process consumes are sent to the server for further processing.

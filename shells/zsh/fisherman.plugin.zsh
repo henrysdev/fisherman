@@ -11,7 +11,7 @@ function startcapture() {
 # Cleans up the temp processes and files related to captures stderror output
 function endcapture() {
     exec 2> /dev/tty
-    pkill -x tee "$stderr_buff"
+    pkill -x "tee $stderr_buff"
     rm "$stderr_buff"
 }
 

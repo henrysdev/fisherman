@@ -1,7 +1,7 @@
 [![Go Report Card](https://goreportcard.com/badge/github.com/henrysdev/fisherman)](https://goreportcard.com/report/github.com/henrysdev/fisherman)
 
 # Fisherman
-Fisherman is a program for crowd-sourced programming help to enable you to fix errors without having to ever leave your terminal. It captures every error-producing command that you enter into your shell and sends this data to a web service that compares your errors against previously seen errors, and returns the best guess to fix.
+Fisherman is a project that aims to promote developer productivity and knowledge sharing among teams by collecting, analyzing, and correlating historical shell activity.
 
 There are three main parts to the client program
 1. The `fishermand` local server

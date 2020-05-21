@@ -52,15 +52,19 @@ ex: `plugins=(foo bar fisherman)`
 Make sure to refresh your shell session to reflect changes to your `.zshrc` file.
 ## Run Instructions
 ### Local Development (Containerized)
-1. Build the docker container
+1. If it's your first run, build the docker base container. This dockerfile has downloads static dependencies which dont need to be downloaded before every run.
+```bash
+docker build -f Base.dockerfile -t base .
+```
+2. Build the main docker container
 ```bash
 docker build -t fishermand .
 ```
-2. Run the docker container
+3. Run the docker container
 ```bash
 docker run -it --rm --name fishermand.container fishermand:latest
 ```
-3. In a new shell session, start a zsh session in the context of the running container. All executed commands should be observably logged in the shell running the container
+4. In a new shell session, start a zsh session in the context of the running container. All executed commands should be observably logged in the shell running the container
 ```bash
 docker exec -it fishermand.container zsh
 ```

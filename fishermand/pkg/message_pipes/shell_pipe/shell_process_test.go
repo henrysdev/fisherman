@@ -23,7 +23,7 @@ func TestNewShellProcess(t *testing.T) {
 	if shellProcess.PID != pid {
 		t.Error("Field pid should be equal to expected")
 	}
-	if shellProcess.Command != command {
+	if shellProcess.NextRecord.Command != command {
 		t.Error("Field command should be equal to expected")
 	}
 }
@@ -50,10 +50,10 @@ func TestPushStderr(t *testing.T) {
 	if expectedRecord.Stderr != record.Stderr {
 		t.Error("record stderr should be equal to expected record stderr")
 	}
-	if shellProcess.Command != nil {
+	if shellProcess.NextRecord.Command != nil {
 		t.Error("Field `command` should've be cleared")
 	}
-	if shellProcess.Stderr != nil {
+	if shellProcess.NextRecord.Stderr != nil {
 		t.Error("Field `stderr` should've be cleared")
 	}
 }
@@ -72,5 +72,22 @@ func TestPushStderr_WhenNilCommand_Nil(t *testing.T) {
 	// Assert
 	if record != nil {
 		t.Error("expected record to be nil")
+	}
+}
+
+func TestPushExit_Record(t *testing.T) {
+	// Arrange
+	exitSignal := &common.ExitSignal{
+		Info:      "exit info",
+		Timestamp: time.Now().UnixNano() / 1000000,
+	}
+	shellProcess := NewShellProcess(pid, nil)
+
+	// Act
+	record := shellProcess.PushExitSignal(exitSignal)
+
+	// Assert
+	if record == nil {
+		t.Error("expected record to not be nil")
 	}
 }

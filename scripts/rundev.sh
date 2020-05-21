@@ -1,5 +1,6 @@
 #!/bin/bash
+FISHERMAN_PATH=$HOME/go/src/github.com/henrysdev/fisherman
 
-./scripts/install.sh
-./scripts/exec.sh
-trap ./scripts/uninstall.sh EXIT
+${FISHERMAN_PATH}/scripts/install.sh
+${FISHERMAN_PATH}/scripts/exec.sh
+trap $HOME/go/src/github.com/henrysdev/fisherman/scripts/uninstall.sh EXIT

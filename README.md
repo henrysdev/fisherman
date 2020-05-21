@@ -20,10 +20,10 @@ Assuming you have Go installed, run the following command: `go get -u github.com
 
 ### Add the ZSH Plugin
 Add the following line to your `.zshrc` file:
-1. `source $HOME/go/src/github.com/fisherman/shells/zsh/fisherman.plugin.zsh`
+1. `source $HOME/go/src/github.com/henrysdev/fisherman/shells/zsh/fisherman.plugin.zsh`
 2. Open up a new shell to refresh changes
 
 ### Run the daemon in dev mode
 Get the `fishermand` process running as follows:
-1. Open up a shell at the repository root and run `sudo ./scripts/rundev.sh` - this will start the `fishermand` client printing to stdout
+1. Open up a shell at the repository root and run `./scripts/rundev.sh` - this script installs and executes the `fishermand` process printing to stdout. Note that you will be prompted for your root password as the program uses /tmp/ as well as /usr/local/bin
 2. Open up additional shells. Any commands you enter as well as any errors these commands produce should be observably logged in the first shell. 

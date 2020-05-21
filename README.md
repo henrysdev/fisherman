@@ -25,5 +25,6 @@ Add the following line to your `.zshrc` file:
 
 ### Run the daemon in dev mode
 Get the `fishermand` process running as follows:
-1. Open up a shell at the repository root and run `./scripts/rundev.sh` - this script installs and executes the `fishermand` process printing to stdout. Note that you will be prompted for your root password as the program uses /tmp/ as well as /usr/local/bin
+1. Open up a new shell at the repository root `cd $HOME/go/src/github.com/henrysdev/fisherman`
+2. Run `./scripts/rundev.sh` - this script installs and executes the `fishermand` process printing to stdout. Note that you will be prompted for your root password as the program uses /tmp/ as well as /usr/local/bin
 2. Open up additional shells. Any commands you enter as well as any errors these commands produce should be observably logged in the first shell. 

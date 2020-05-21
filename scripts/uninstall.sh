@@ -4,16 +4,17 @@
 function program_uninstall() {
     if [ -d /tmp/fisherman ]
         then
-            rm -rf /tmp/fisherman
+            sudo rm -rf /tmp/fisherman
     fi
     if [[ ( -d $HOME/.config ) && ( -d $HOME/.config/fisherman ) ]]
         then
-            rm -rf $HOME/.config/fisherman
+            sudo rm -rf $HOME/.config/fisherman
     fi
     if [ -f /usr/local/bin/fishermand ]
         then
-            rm -f /usr/local/bin/fishermand
+            sudo rm -f /usr/local/bin/fishermand
     fi
+    sudo rm -f /usr/local/bin/fishermand_booter
 }
 
 # Remove launchd entry

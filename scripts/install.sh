@@ -1,17 +1,19 @@
 #!/bin/bash
 
+# User path constant
+FISHERMAN_PATH=$HOME/go/src/github.com/henrysdev/fisherman
+
 # Build and install the fishermand binary
 function bin_install() {
-    # TODO remove this step if not building from source
-    go build fishermand/cmd/fishermand/main.go
-    mv main /usr/local/bin/fishermand
-    cp ./scripts/exec.sh /usr/local/bin/fishermand_booter
+    go build ${FISHERMAN_PATH}/fishermand/cmd/fishermand/main.go
+    sudo mv main /usr/local/bin/fishermand
+    sudo cp ${FISHERMAN_PATH}/scripts/exec.sh /usr/local/bin/fishermand_booter
 }
 
 # Copy plist file to daemons dir and load
 function launchd_install() {
     # TODO bundle plist with other install files
-    cp ../install/macos/fishermand.plist $HOME/Library/LaunchAgents/fishermand.plist
+    cp ${FISHERMAN_PATH}/install/macos/fishermand.plist $HOME/Library/LaunchAgents/fishermand.plist
     launchctl load $HOME/Library/LaunchAgents/fishermand.plist
 }
 
@@ -26,8 +28,8 @@ function config_install() {
             mkdir $HOME/.config/fisherman
     fi
     if [ ! -f $HOME/.config/fisherman/config.yml ]
-        then # TODO bundle config.yml with other install files
-            cp fishermand/config/config.yml $HOME/.config/fisherman/config.yml
+        then
+            cp ${FISHERMAN_PATH}/fishermand/config/config.yml $HOME/.config/fisherman/config.yml
     fi
 }
 

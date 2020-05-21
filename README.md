@@ -11,8 +11,11 @@ There are three main parts to the client program
 ## Fishermand
 The `fishermand` process is a long-running background application that listens for incoming commands/errors from all active shells that you are using via IPC messages over a unix fifo pipe. The messages that this process consumes are sent to the server for further processing.
 
-## Shell plugin
+## Shell Plugin
 The shell plugin is responsible for publishing messages to the pipe that `fishermand` reads from. The shell plugin sends every command entered by the user along with any respective `STDERR` output while being completely out of the way of the user. The messages sent include the command, error output, and PID of the shell.
+
+## Web Server
+TODO
 
 # Development
 ## Quick Start

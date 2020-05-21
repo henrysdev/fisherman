@@ -4,17 +4,22 @@
 function program_uninstall() {
     if [ -d /tmp/fisherman ]
         then
-            sudo rm -rf /tmp/fisherman
+            echo "removing /tmp/fisherman directory"
+            rm -rf /tmp/fisherman
     fi
     if [[ ( -d $HOME/.config ) && ( -d $HOME/.config/fisherman ) ]]
         then
-            sudo rm -rf $HOME/.config/fisherman
+            echo "removing ~/.config/fisherman directory"
+            rm -rf $HOME/.config/fisherman
     fi
     if [ -f /usr/local/bin/fishermand ]
         then
-            sudo rm -f /usr/local/bin/fishermand
+            echo "removing /usr/local/bin/fishermand"
+            rm -f /usr/local/bin/fishermand
     fi
-    sudo rm -f /usr/local/bin/fishermand_booter
+
+    echo "removing /usr/local/bin/fishermand_booter"
+    rm -f /usr/local/bin/fishermand_booter
 }
 
 # Remove launchd entry
@@ -23,4 +28,5 @@ function launchd_uninstall() {
     rm ~/Library/LaunchAgents/fishermand.plist
 }
 
+echo "uninstalling fishermand..."
 program_uninstall

@@ -1,33 +1,79 @@
 [![Go Report Card](https://goreportcard.com/badge/github.com/henrysdev/fisherman)](https://goreportcard.com/report/github.com/henrysdev/fisherman)
 
-# Fisherman
-Fisherman is a project that aims to promote developer productivity and knowledge sharing among teams by collecting, analyzing, and correlating historical shell activity.
+# fisherman
+fisherman is a project that aims to promote developer productivity and knowledge sharing among teams by collecting, analyzing, and correlating historical shell activity data.
 
-There are three main parts to the client program
-1. The `fishermand` client daemon
-2. The shell plugin (`ZSH` currently supported)
-3. Backend web server (TODO)
-
-## Fishermand
-The `fishermand` process is a long-running background application that listens for incoming commands/errors from all active shells that you are using via IPC messages over a unix fifo pipe. The messages that this process consumes are sent to the server for further processing.
-
-## Shell Plugin
-The shell plugin is responsible for publishing messages to the pipe that `fishermand` reads from. The shell plugin sends every command entered by the user along with any respective `STDERR` output while being completely out of the way of the user. The messages sent include the command, error output, and PID of the shell.
-
-## Web Server
+## Overview
+There are three primary parts of fisherman's architecture
+1. fishermand (client-side)
+2. Shell plugin (client-side)
+3. Web server (TODO)
+### fishermand
+fishermand is a client daemon that listens for and consumes shell activity from local shell processes via IPC messaging. fishermand normalizes received ShellMessage objects before buffering them to be sent to the web server for further processing and persistence. Note that fishermand is only able to receive messages from shells with the fisherman shell plugin installed.
+A ShellMessage contains the following fields
+- Command (executed command)
+- Error (any/all stderr output produced by the command)
+- PID (process id of the executing shell)
+- Timestamp
+### Shell Plugin
+The shell plugin is responsible for forwarding activity from shell processes to fishermand via IPC messaging. This plugin operates in the background of a user's shell session, capturing each executed command with its respective error output, building a ShellMessage object, and forwarding it to the fishermand process. Every executed command from a shell session (with the fisherman shell plugin installed) will produce a new ShellMessage and write it to fishermand. A ShellMessage is sent upon completed execution of a command. Due to this, it is important to note that long-running commands will not be sent until they have terminated in one way or another. ZSH is currently the only supported shell for use with fisherman.
+### Web Server
 TODO
+## Installation Instructions
+### Prerequisites
+This project requires having Go, ZSH, and Docker installed. Specific installation instructions for these tools can be found below
+- Go: https://golang.org/dl/
+- ZSH: https://github.com/ohmyzsh/ohmyzsh/wiki/Installing-ZSH
+- Docker: https://docs.docker.com/get-docker/
 
-# Development
-## Quick Start
-### Install the Go package
-Assuming you have Go installed, run the following command: `go get -u github.com/henrysdev/fisherman/...`
+### Go Project
+Get the fisherman Go project
+```bash
+go get -u github.com/henrysdev/fisherman/...
+```
 
-### Add the ZSH Plugin
-Add the following line to your `.zshrc` file:
-1. `source $HOME/go/src/github.com/henrysdev/fisherman/shells/zsh/fisherman.plugin.zsh`
-2. Open up a new shell to refresh changes
+### ZSH Plugin
+#### Quick and Dirty Method
+Add the fisherman shell plugin to your zsh config by adding the following line to your `.zshrc` file (typically located at $HOME/.zshrc)
+```zsh
+source $HOME/go/src/github.com/henrysdev/fisherman/shells/zsh/fisherman.plugin.zsh
+```
 
-### Run the daemon in dev mode
-Get the `fishermand` process running as follows:
-1. Run `$HOME/go/src/github.com/henrysdev/fisherman/fishermand/scripts/rundev.sh` - this script installs and executes the `fishermand` process logging to stdout. On exit, this script will uninstall the fishermand program and its dependencies, leaving your local machine back in a clean state. Note that you will be prompted for your root password on install as the program uses /tmp/ as well as /usr/local/bin
-2. Open up additional shells. Any commands you enter as well as any errors these commands produce should be observably logged in the first shell.
+#### Oh-My-Zsh Method
+If you have oh-my-zsh installed and wish to install in a more proper manner
+1. Create plugin directory for fisherman
+```bash
+mkdir $ZSH_CUSTOM/plugins/fisherman
+```
+2. Symlink fisherman script from repo to fisherman plugin directory
+```bash
+ln -s $HOME/go/src/github.com/henrysdev/fisherman/shells/zsh/fisherman.plugin.zsh $ZSH_CUSTOM/plugins/fisherman/fisherman.plugin.zsh
+```
+3. Add `fisherman` to your plugins list in your `.zshrc` file (typically located at $HOME/.zshrc)
+ex: `plugins=(foo bar fisherman)`
+
+Make sure to refresh your shell session to reflect changes to your `.zshrc` file.
+
+## Run Instructions
+### Testing During Local Development
+1. Build the docker container
+```bash
+docker build -t fishermand .
+```
+2. Run the docker container
+```bash
+docker run -it --rm --name fishermand.container fishermand:latest
+```
+3. In a new shell session, start a zsh session in the context of the running container. All executed commands should be observably logged in the shell running the container
+```bash
+docker exec -it fishermand.container zsh
+```
+
+### Production
+Make sure you have completed the installation instructions before attempting to run the program.
+#### Quick and Dirty Method
+1. Execute the `rundev.sh` script. Note that you may be prompted for your root password on the install step as the fisherman uses two privileged system directories to store binaries and temp files (`/usr/local/bin` and `/tmp/`).
+```bash
+$HOME/go/src/github.com/henrysdev/fisherman/fishermand/scripts/rundev.sh
+```
+2. Open up additional shell sessions and start executing commands. All executed commands should be observably logged in the shell executing fishermand via rundev.sh.

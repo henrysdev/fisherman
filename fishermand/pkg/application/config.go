@@ -1,8 +1,10 @@
 package application
 
 import (
+	"fmt"
 	"io/ioutil"
-	"log"
+
+	"github.com/henrysdev/fisherman/fishermand/pkg/utils"
 
 	"github.com/pkg/errors"
 	"gopkg.in/yaml.v2"
@@ -18,15 +20,17 @@ type Config struct {
 
 // ParseConfig reads in configuration values from provided flags
 func ParseConfig(cfgFilepath string) (*Config, error) {
-
+	if !utils.FileExists(cfgFilepath) {
+		return nil, fmt.Errorf("config file does not exist at path %s", cfgFilepath)
+	}
 	var config Config
 	yamlFile, err := ioutil.ReadFile(cfgFilepath)
 	if err != nil {
-		log.Fatal(errors.Wrap(err, "unable to read config file"))
+		return nil, errors.Wrap(err, "unable to read config file")
 	}
 	err = yaml.Unmarshal(yamlFile, &config)
 	if err != nil {
-		log.Fatal(errors.Wrap(err, "unable to unmarshal config file"))
+		return nil, errors.Wrap(err, "unable to unmarshal config file")
 	}
 
 	return &config, nil

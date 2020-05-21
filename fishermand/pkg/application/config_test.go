@@ -18,6 +18,12 @@ func genDummyYamlFile(config *Config) {
 	ioutil.WriteFile(dummycfg, bytes, 0644)
 }
 
+func genBadDummyYamlFile(config *Config) {
+	bytes, _ := yaml.Marshal(config)
+	bytes = append(bytes, []byte("io3pjkals;d")...)
+	ioutil.WriteFile(dummycfg, bytes, 0644)
+}
+
 func cleanupDummyYamlFile() {
 	utils.RemoveFile(dummycfg)
 }
@@ -51,5 +57,41 @@ func TestParseConfig(t *testing.T) {
 	}
 	if expectedCfg.MaxCmdsPerUpdate != cfg.MaxCmdsPerUpdate {
 		t.Errorf("MaxCmdsPerUpdate not the same")
+	}
+}
+
+func TestParseConfig_WhenNoFile_Error(t *testing.T) {
+	// Act
+	cfg, err := ParseConfig(dummycfg)
+
+	// Assert
+	if err == nil {
+		t.Error("Err should not be nil")
+	}
+	if cfg != nil {
+		t.Errorf("Config should be nil, got %v", cfg)
+	}
+}
+
+func TestParseConfig_Malformatted_Error(t *testing.T) {
+	// Arrange
+	expectedCfg := &Config{
+		TempDirectory:    ".",
+		ShellPipe:        ".",
+		UpdateFrequency:  int64(0),
+		MaxCmdsPerUpdate: 1,
+	}
+	genBadDummyYamlFile(expectedCfg)
+	defer cleanupDummyYamlFile()
+
+	// Act
+	cfg, err := ParseConfig(dummycfg)
+
+	// Assert
+	if err == nil {
+		t.Error("Err should not be nil")
+	}
+	if cfg != nil {
+		t.Errorf("Config should be nil, got %v", cfg)
 	}
 }

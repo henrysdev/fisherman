@@ -72,3 +72,26 @@ func TestProcessMessage_ErrorFirst_ShouldNotPush(t *testing.T) {
 		t.Errorf("Buffer should not be empty")
 	}
 }
+
+func TestProcessMessage_ExitMessage_ShouldPush(t *testing.T) {
+	// Arrange
+	buffer := NewBuffer()
+	handler := NewShellMessageHandler(buffer)
+	cmdMsg := []byte(`100 0 ls -gha`)
+	exitMsg := []byte(`100 2 ls -gha`)
+
+	// Act
+	cmdErr := handler.ProcessMessage(cmdMsg)
+	exitErr := handler.ProcessMessage(exitMsg)
+
+	// Assert
+	if cmdErr != nil {
+		t.Errorf("Returned error from ProcessMessage, should have been nil. Error: %v", cmdErr)
+	}
+	if exitErr != nil {
+		t.Errorf("Returned error from ProcessMessage, should have been nil. Error: %v", exitErr)
+	}
+	if buffer.IsEmpty() {
+		t.Errorf("Buffer should not be empty")
+	}
+}

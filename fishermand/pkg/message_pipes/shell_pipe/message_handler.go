@@ -6,7 +6,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/henrysdev/fisherman/fishermand/pkg/common"
+	common "github.com/henrysdev/fisherman/fishermand/pkg/common"
 	messagepipes "github.com/henrysdev/fisherman/fishermand/pkg/message_pipes"
 	"github.com/pkg/errors"
 )
@@ -18,6 +18,7 @@ type ShellHandlerAPI interface {
 	messagepipes.HandlerAPI
 	handleCommand(shellMessage *common.ShellMessage)
 	handleStderr(shellMessage *common.ShellMessage)
+	handleExit(shellMessage *common.ShellMessage)
 }
 
 // ShellMessageHandler represents the state of the handler which includes a lookup table for
@@ -42,7 +43,6 @@ func (m *ShellMessageHandler) ProcessMessage(msgBytes []byte) error {
 	if err != nil {
 		return errors.Wrap(err, "shell message handler error during process message")
 	}
-
 	// Route message based on message type
 	switch shellMessage.MessageType {
 	case common.COMMAND:
@@ -51,8 +51,13 @@ func (m *ShellMessageHandler) ProcessMessage(msgBytes []byte) error {
 	case common.STDERR:
 		m.handleStderr(shellMessage)
 		return nil
+	case common.EXIT:
+		m.handleExit(shellMessage)
+		return nil
 	default:
-		return fmt.Errorf("invalid shell message type: %s", string(msgBytes))
+		return fmt.Errorf("invalid shell message type: %v for shell message %v",
+			shellMessage.MessageType,
+			shellMessage)
 	}
 }
 
@@ -111,6 +116,26 @@ func (m *ShellMessageHandler) handleStderr(
 	if _, found := m.shellProcesses[pid]; found {
 		if record := m.shellProcesses[pid].PushStderr(stderr); record != nil {
 			m.buffer.PushExecutionRecord(record)
+		}
+	}
+}
+
+func (m *ShellMessageHandler) handleExit(
+	shellMessage *common.ShellMessage,
+) {
+	pid := shellMessage.PID
+	exitSignal := &common.ExitSignal{
+		Info:      shellMessage.MessageContents,
+		Timestamp: shellMessage.Timestamp,
+	}
+	// Push exitSignal message, signaling the end of life for the shell process at the given pid.
+	// Delete the pid key from the map to prevent potential pid collisions in the future
+	if _, found := m.shellProcesses[pid]; found {
+		if record := m.shellProcesses[pid].PushExitSignal(exitSignal); record != nil {
+			m.buffer.PushExecutionRecord(record)
+			if _, ok := m.shellProcesses[pid]; ok {
+				delete(m.shellProcesses, pid)
+			}
 		}
 	}
 }

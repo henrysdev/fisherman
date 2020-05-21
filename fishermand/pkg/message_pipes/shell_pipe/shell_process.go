@@ -1,46 +1,56 @@
 package shellpipe
 
 import (
-	"github.com/henrysdev/fisherman/fishermand/pkg/common"
+	common "github.com/henrysdev/fisherman/fishermand/pkg/common"
 )
 
 // ShellProcessAPI exposes an API for interacting with shell process state
 type ShellProcessAPI interface {
 	PushCommand(command *common.Command)
 	PushStderror(stderr *common.Stderr) *common.ExecutionRecord
+	PushExitSignal(exitSignal *common.ExitSignal) *common.ExecutionRecord
 }
 
 // ShellProcess represents the state of a shell the program receives messages from
 type ShellProcess struct {
-	PID     string
-	Command *common.Command
-	Stderr  *common.Stderr
+	PID        string
+	NextRecord *common.ExecutionRecord
 }
 
 // NewShellProcess returns a new ShellProcess instance
 func NewShellProcess(pid string, command *common.Command) *ShellProcess {
 	return &ShellProcess{
-		PID:     pid,
-		Command: command,
+		PID: pid,
+		NextRecord: &common.ExecutionRecord{
+			Command: command,
+		},
 	}
 }
 
 // PushCommand stores the command
 func (s *ShellProcess) PushCommand(command *common.Command) {
-	s.Command = command
+	s.NextRecord.Command = command
 }
 
 // PushStderr stores the stderr and returns an execution record
 func (s *ShellProcess) PushStderr(stderr *common.Stderr) *common.ExecutionRecord {
-	if s.Command == nil {
+	if s.NextRecord.Command == nil {
 		return nil
 	}
 	record := &common.ExecutionRecord{
 		PID:     s.PID,
-		Command: s.Command,
+		Command: s.NextRecord.Command,
 		Stderr:  stderr,
 	}
-	s.Command = nil
-	s.Stderr = nil
+	s.NextRecord.Command = nil
+	s.NextRecord.Stderr = nil
 	return record
+}
+
+// PushExitSignal stores the stderr and returns an execution record
+func (s *ShellProcess) PushExitSignal(exitSignal *common.ExitSignal) *common.ExecutionRecord {
+	return &common.ExecutionRecord{
+		PID:        s.PID,
+		ExitSignal: exitSignal,
+	}
 }

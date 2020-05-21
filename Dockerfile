@@ -1,18 +1,11 @@
-FROM golang:1.13
+FROM base
 
 WORKDIR /root/go/src/github.com/henrysdev/fisherman
-COPY . .
-
-# Install system resources
-RUN ["apt-get", "update"]
-RUN ["apt-get", "install", "-y", "zsh"]
-RUN ["apt-get", "install", "-y", "sudo"]
-RUN wget https://github.com/robbyrussell/oh-my-zsh/raw/master/tools/install.sh -O - | zsh || true
-RUN ["/bin/sh", "-c", "echo 'source shells/zsh/fisherman.plugin.zsh' >> ~/.zshrc"]
+COPY . /go/src/github.com/henrysdev/fisherman
 
 # Install Go resources
-RUN go get -d -v ./...
-RUN go build -v ./...
+RUN go get -d -v ./fishermand...
+RUN go build -v fishermand/cmd/fishermand/main.go
 
 # Run client Daemon
 CMD ./fishermand/scripts/rundev.sh

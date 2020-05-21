@@ -15,8 +15,17 @@ function endcapture() {
     rm "$stderr_buff"
 }
 
-# Always remove temp file on exit
-trap "rm ${stderr_buff}" EXIT
+# Send message to cmdpipe that process is exiting as well as clean up stderr
+# buffer file. Called on any exit
+function onexit() {
+    if pgrep -xf "$bin_name" > /dev/null && [ -p "$output_pipe" ]
+        then
+            cmd_msg="${pid} 2 exit"
+            echo "$cmd_msg" > "$output_pipe"
+    fi
+    rm ${stderr_buff}
+}
+trap onexit EXIT
 
 # Ran on preexec (after a user enters a command but before it is executed).
 # If capturing, it will write every command as in the appropriate format to the

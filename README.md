@@ -2,7 +2,6 @@
 
 # fisherman
 fisherman is a project that aims to promote developer productivity and knowledge sharing among teams by collecting, analyzing, and correlating historical shell activity data.
-
 ## Overview
 There are three primary parts of fisherman's architecture
 1. fishermand (client-side)
@@ -31,14 +30,12 @@ Get the fisherman Go project
 ```bash
 go get -u github.com/henrysdev/fisherman/...
 ```
-
 ### ZSH Plugin
 #### Quick and Dirty Method
 Add the fisherman shell plugin to your zsh config by adding the following line to your `.zshrc` file (typically located at $HOME/.zshrc)
 ```zsh
 source $HOME/go/src/github.com/henrysdev/fisherman/shells/zsh/fisherman.plugin.zsh
 ```
-
 #### Oh-My-Zsh Method
 If you have oh-my-zsh installed and wish to install in a more proper manner
 1. Create plugin directory for fisherman
@@ -53,27 +50,37 @@ ln -s $HOME/go/src/github.com/henrysdev/fisherman/shells/zsh/fisherman.plugin.zs
 ex: `plugins=(foo bar fisherman)`
 
 Make sure to refresh your shell session to reflect changes to your `.zshrc` file.
-
 ## Run Instructions
-### Testing During Local Development
-1. Build the docker container
+### Local Development (Containerized)
+1. If it's your first run, build the docker base container. This dockerfile has downloads static dependencies which dont need to be downloaded before every run.
+```bash
+docker build -f Base.dockerfile -t base .
+```
+2. Build the main docker container
 ```bash
 docker build -t fishermand .
 ```
-2. Run the docker container
+3. Run the docker container
 ```bash
 docker run -it --rm --name fishermand.container fishermand:latest
 ```
-3. In a new shell session, start a zsh session in the context of the running container. All executed commands should be observably logged in the shell running the container
+4. In a new shell session, start a zsh session in the context of the running container. All executed commands should be observably logged in the shell running the container
 ```bash
 docker exec -it fishermand.container zsh
 ```
-
-### Production
+### Production (System-Level)
 Make sure you have completed the installation instructions before attempting to run the program.
-#### Quick and Dirty Method
-1. Execute the `rundev.sh` script. Note that you may be prompted for your root password on the install step as the fisherman uses two privileged system directories to store binaries and temp files (`/usr/local/bin` and `/tmp/`).
+1. Run the `install.sh` script to build and install necessary resources. Note that you may be prompted for your root password as fisherman uses two privileged system directories to store binaries and temporary files (`/usr/local/bin` and `/tmp/` respectively)
 ```bash
-$HOME/go/src/github.com/henrysdev/fisherman/fishermand/scripts/rundev.sh
+$HOME/go/src/github.com/henrysdev/fisherman/fishermand/scripts/install.sh
 ```
-2. Open up additional shell sessions and start executing commands. All executed commands should be observably logged in the shell executing fishermand via rundev.sh.
+2. Run the `exec.sh` script to start execution of the program.
+```bash
+$HOME/go/src/github.com/henrysdev/fisherman/fishermand/scripts/exec.sh
+```
+3. Open up additional shell sessions and start executing commands. All executed commands should be observably logged in the shell executing fishermand via `exec.sh`
+
+If you wish to uninstall fisherman from your system, run `uninstall.sh`
+```bash
+$HOME/go/src/github.com/henrysdev/fisherman/fishermand/scripts/uninstall.sh
+```

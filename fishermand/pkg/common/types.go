@@ -22,32 +22,32 @@ type ShellMessage struct {
 
 // Command represents a command run from the shell
 type Command struct {
-	Line      string
-	Timestamp int64
+	Line      string `json:"line"`
+	Timestamp int64  `json:"timestamp"`
 }
 
 // Stderr represents a stderr output
 type Stderr struct {
-	Line      string
-	Timestamp int64
+	Line      string `json:"line"`
+	Timestamp int64  `json:"timestamp"`
 }
 
 // ExitSignal represent an exit signal from the shell
 type ExitSignal struct {
-	Info      string
-	Timestamp int64
+	Info      string `json:"info"`
+	Timestamp int64  `json:"timestamp"`
 }
 
 // ExecutionRecord is the type that represents a local command history record
 type ExecutionRecord struct {
-	PID        string
-	Command    *Command
-	Stderr     *Stderr
-	ExitSignal *ExitSignal
+	PID        string      `json:"pid"`
+	Command    *Command    `json:"command"`
+	Stderr     *Stderr     `json:"stderr"`
+	ExitSignal *ExitSignal `json:"exit_signal"`
 }
 
 // CommandHistoryUpdateBody represents the body of the POST request send for history updates
 type CommandHistoryUpdateBody struct {
-	Commands []*ExecutionRecord
+	Commands []*ExecutionRecord `json:"commands"`
 	// TODO metadata
 }

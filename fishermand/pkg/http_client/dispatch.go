@@ -43,9 +43,7 @@ func (c *Dispatcher) SendCmdHistoryUpdate(commands []*common.ExecutionRecord) er
 
 	// Send request
 	resp, err := http.Post(
-		"127.0.0.1:8888/aaaa",
-		"application/json",
-		bytes.NewBuffer(reqBody))
+		"http://localhost:4000/shellmsg", "application/json", bytes.NewBuffer(reqBody))
 	if err != nil {
 		return err
 	}

@@ -22,7 +22,7 @@ defmodule FishermanServerWeb.ShellMessageControllerTest do
     assert json_response(conn, 200) == %{}
   end
 
-  test "POST /shellmsg should raise error when bad format", %{conn: conn} do
+  test "POST /shellmsg should raise error due to no pid", %{conn: conn} do
     resp =
       try do
         post(conn, "/shellmsg", %{
@@ -38,7 +38,7 @@ defmodule FishermanServerWeb.ShellMessageControllerTest do
 
         false
       rescue
-        RuntimeError -> true
+        Postgrex.Error -> true
       end
 
     assert resp == true

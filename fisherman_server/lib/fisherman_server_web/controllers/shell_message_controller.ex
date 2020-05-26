@@ -4,55 +4,36 @@ defmodule FishermanServerWeb.ShellMessageController do
   alias FishermanServer.{
     Repo,
     ShellRecord,
-    Utils
+    Utils,
+    ClientTypes
   }
 
   def new(conn, params) do
     params["commands"]
-    |> Enum.each(&store_shell_message(&1))
+    |> Enum.each(&handle_shell_record(&1))
 
     json(conn, %{})
   end
 
-  defp store_shell_message(msg) do
-    shell_record = shell_message_to_shell_record(msg)
-    Repo.insert(shell_record)
+  defp handle_shell_record(sh_record) do
+    sh_record
+    |> marshal()
+    |> Repo.insert()
   end
 
-  defp shell_message_to_shell_record(msg) do
-    # validate required params
-    record =
-      with {:ok, pid} <- Map.fetch(msg, "pid"),
-           {:ok, cmd} <- Map.fetch(msg, "command"),
-           {:ok, line} <- Map.fetch(cmd, "line"),
-           {:ok, cmd_timestamp} <- Map.fetch(cmd, "timestamp") do
-        %ShellRecord{
-          pid: pid,
-          command: line,
-          # TODO put in utils
-          command_timestamp: Utils.unix_millis_to_naive_dt(cmd_timestamp)
-        }
-      else
-        err ->
-          err
-          raise "invalid message format"
-      end
-
-    # add extra params if present
-    with {:ok, stderr} <- Map.fetch(msg, "stderr"),
-         {:ok, line} <- Map.fetch(stderr, "line"),
-         {:ok, stderr_timestamp} <- Map.fetch(stderr, "timestamp") do
-      %ShellRecord{
-        pid: record.pid,
-        command: record.command,
-        command_timestamp: record.command_timestamp,
-        error: line,
-        error_timestamp: Utils.unix_millis_to_naive_dt(stderr_timestamp)
-      }
-    else
-      err ->
-        err
-        record
-    end
+  defp marshal(sh_record) do
+    %ShellRecord{
+      pid: get_in(sh_record, ["pid"]),
+      command: get_in(sh_record, ["command", "line"]),
+      command_timestamp:
+        sh_record
+        |> get_in(["command", "timestamp"])
+        |> Utils.unix_millis_to_naive_dt(),
+      error: get_in(sh_record, ["stderr", "line"]),
+      error_timestamp:
+        sh_record
+        |> get_in(["stderr", "timestamp"])
+        |> Utils.unix_millis_to_naive_dt()
+    }
   end
 end

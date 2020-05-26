@@ -2,4 +2,4 @@ temp_dir: /tmp/fisherman/
 shell_pipe: /tmp/fisherman/cmdpipe
 update_frequency: 0 # ms between each batch of updates sent to server
 max_cmds_per_update: 1
-bin_name: /usr/local/bin/fishermand
+user_id: 98e27c44-8b39-41f7-837a-9e6a620708b6

@@ -48,6 +48,7 @@ type ExecutionRecord struct {
 
 // CommandHistoryUpdateBody represents the body of the POST request send for history updates
 type CommandHistoryUpdateBody struct {
+	UserID   string             `json:"user_id"`
 	Commands []*ExecutionRecord `json:"commands"`
 	// TODO metadata
 }

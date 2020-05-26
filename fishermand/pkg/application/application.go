@@ -49,7 +49,7 @@ func initPipe(cfg *Config) (*shellpipe.ShellListener, error) {
 	shellPipe := shellpipe.NewShellListener(
 		cfg.ShellPipe,
 		buffer,
-		httpclient.NewDispatcher(),
+		httpclient.NewDispatcher(cfg.UserID),
 		cfg.UpdateFrequency,
 		cfg.MaxCmdsPerUpdate,
 		shellpipe.NewShellMessageHandler(buffer),

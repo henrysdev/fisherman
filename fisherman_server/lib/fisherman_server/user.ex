@@ -6,7 +6,8 @@ defmodule FishermanServer.User do
   schema "users" do
     field :email, :string
     field :machine_serial, :string
-    field :name, :string
+    field :first_name, :string
+    field :last_name, :string
     field :username, :string
 
     timestamps()
@@ -15,7 +16,7 @@ defmodule FishermanServer.User do
   @doc false
   def changeset(user, attrs) do
     user
-    |> cast(attrs, [:name, :email, :username, :machine_serial])
-    |> validate_required([:name, :email, :username, :machine_serial])
+    |> cast(attrs, [:first_name, :last_name, :email, :username, :machine_serial])
+    |> validate_required([:first_name, :last_name, :email, :username, :machine_serial])
   end
 end

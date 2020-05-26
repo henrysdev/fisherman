@@ -19,12 +19,14 @@ type DispatchAPI interface {
 // Dispatcher represents the state of the client request dispatcher
 type Dispatcher struct {
 	client *http.Client
+	userID string
 }
 
 // NewDispatcher returns a new Dispatcher instance
-func NewDispatcher() *Dispatcher {
+func NewDispatcher(userID string) *Dispatcher {
 	return &Dispatcher{
 		client: &http.Client{},
+		userID: userID,
 	}
 }
 
@@ -36,13 +38,14 @@ func (c *Dispatcher) SendCmdHistoryUpdate(commands []*common.ExecutionRecord) er
 	// Form request
 	reqBody, err := json.Marshal(common.CommandHistoryUpdateBody{
 		Commands: commands,
+		UserID:   c.userID,
 	})
 	if err != nil {
 		return err
 	}
 
 	// Send request
-	resp, err := http.Post(
+	resp, err := c.client.Post(
 		"http://localhost:4000/shellmsg", "application/json", bytes.NewBuffer(reqBody))
 	if err != nil {
 		return err

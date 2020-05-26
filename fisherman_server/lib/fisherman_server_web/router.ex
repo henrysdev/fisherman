@@ -22,7 +22,13 @@ defmodule FishermanServerWeb.Router do
   scope "/shellmsg", FishermanServerWeb do
     pipe_through :api
 
-    post "/", ShellMessageController, :new
+    post "/", ShellMessageController, :create
+  end
+
+  scope "/user", FishermanServerWeb do
+    pipe_through :api
+
+    post "/", UserController, :create
   end
 
   # Other scopes may use custom stacks.

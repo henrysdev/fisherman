@@ -4,10 +4,10 @@ import (
 	"fmt"
 	"io/ioutil"
 
-	"github.com/henrysdev/fisherman/fishermand/pkg/utils"
-
 	"github.com/pkg/errors"
 	"gopkg.in/yaml.v2"
+
+	"github.com/henrysdev/fisherman/fishermand/pkg/utils"
 )
 
 // Config contains necessary credentials for program
@@ -16,6 +16,7 @@ type Config struct {
 	ShellPipe        string `yaml:"shell_pipe"`          // name of shell fifo pipe
 	UpdateFrequency  int64  `yaml:"update_frequency"`    // frequency to pushing to server (ms)
 	MaxCmdsPerUpdate int    `yaml:"max_cmds_per_update"` // max number of commands per payload sent to server
+	UserID           string `yaml:"user_id"`             // uuid of the user
 }
 
 // ParseConfig reads in configuration values from provided flags

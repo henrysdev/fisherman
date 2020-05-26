@@ -7,16 +7,18 @@ import (
 	"github.com/pkg/errors"
 	"gopkg.in/yaml.v2"
 
+	"github.com/henrysdev/fisherman/fishermand/pkg/common"
 	"github.com/henrysdev/fisherman/fishermand/pkg/utils"
 )
 
 // Config contains necessary credentials for program
 type Config struct {
-	TempDirectory    string `yaml:"temp_dir"`            // location of temp files
-	ShellPipe        string `yaml:"shell_pipe"`          // name of shell fifo pipe
-	UpdateFrequency  int64  `yaml:"update_frequency"`    // frequency to pushing to server (ms)
-	MaxCmdsPerUpdate int    `yaml:"max_cmds_per_update"` // max number of commands per payload sent to server
-	UserID           string `yaml:"user_id"`             // uuid of the user
+	TempDirectory    string       `yaml:"temp_dir"`            // location of temp files
+	ShellPipe        string       `yaml:"shell_pipe"`          // name of shell fifo pipe
+	UpdateFrequency  int64        `yaml:"update_frequency"`    // frequency to pushing to server (ms)
+	MaxCmdsPerUpdate int          `yaml:"max_cmds_per_update"` // max number of commands per payload sent to server
+	HostURL          string       `yaml:"host_url"`            // server host url
+	User             *common.User `yaml:"user"`                // user object
 }
 
 // ParseConfig reads in configuration values from provided flags

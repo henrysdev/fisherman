@@ -52,3 +52,13 @@ type CommandHistoryUpdateBody struct {
 	Commands []*ExecutionRecord `json:"commands"`
 	// TODO metadata
 }
+
+// User represents the structure of a user object
+type User struct {
+	Email         string `json:"email" yaml:"email"`
+	FirstName     string `json:"first_name" yaml:"first_name"`
+	LastName      string `json:"last_name" yaml:"last_name"`
+	MachineSerial string `json:"machine_serial" yaml:"machine_serial"`
+	Username      string `json:"username" yaml:"username"`
+	UserID        string `json:"user_id" yaml:"user_id"` // read only
+}

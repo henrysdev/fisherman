@@ -44,12 +44,18 @@ func run(cfg *Config, shellPipe *shellpipe.ShellListener) {
 
 // initPipe instantiates the unix fifo pipe as well as their listeners
 func initPipe(cfg *Config) (*shellpipe.ShellListener, error) {
+	// Register with server
+	httpDispatch := httpclient.NewDispatcher(cfg.HostURL)
+	if err := httpDispatch.RegisterUser(cfg.User); err != nil {
+		return nil, errors.Wrap(err, "failed to register user with server")
+	}
+
 	// Initialize shell pipe
 	buffer := shellpipe.NewBuffer()
 	shellPipe := shellpipe.NewShellListener(
 		cfg.ShellPipe,
 		buffer,
-		httpclient.NewDispatcher(cfg.UserID),
+		httpDispatch,
 		cfg.UpdateFrequency,
 		cfg.MaxCmdsPerUpdate,
 		shellpipe.NewShellMessageHandler(buffer),

@@ -9,7 +9,7 @@ defmodule FishermanServer.Repo.Migrations.AddPidToShellRecords do
 
   def down do
     alter table(:shell_records) do
-      drop :pid
+      remove :pid
     end
   end
 end

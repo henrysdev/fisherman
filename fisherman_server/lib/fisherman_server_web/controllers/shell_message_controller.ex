@@ -30,12 +30,12 @@ defmodule FishermanServerWeb.ShellMessageController do
       command_timestamp:
         sh_record
         |> get_in(["command", "timestamp"])
-        |> Utils.unix_millis_to_naive_dt(),
+        |> Utils.unix_millis_to_dt(),
       error: get_in(sh_record, ["stderr", "line"]),
       error_timestamp:
         sh_record
         |> get_in(["stderr", "timestamp"])
-        |> Utils.unix_millis_to_naive_dt()
+        |> Utils.unix_millis_to_dt()
     }
   end
 end

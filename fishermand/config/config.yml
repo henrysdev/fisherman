@@ -2,4 +2,10 @@ temp_dir: /tmp/fisherman/
 shell_pipe: /tmp/fisherman/cmdpipe
 update_frequency: 0 # ms between each batch of updates sent to server
 max_cmds_per_update: 1
-user_id: 98e27c44-8b39-41f7-837a-9e6a620708b6
+host_url: http://localhost:4000
+user:
+  email: foo.foo@gmail.com
+  username: foo.bar
+  first_name: henry
+  last_name: warren
+  machine_serial: xyz

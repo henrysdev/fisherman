@@ -6,6 +6,7 @@ import (
 
 	"gopkg.in/yaml.v2"
 
+	"github.com/henrysdev/fisherman/fishermand/pkg/common"
 	"github.com/henrysdev/fisherman/fishermand/pkg/utils"
 )
 
@@ -35,7 +36,14 @@ func TestParseConfig(t *testing.T) {
 		ShellPipe:        ".",
 		UpdateFrequency:  int64(0),
 		MaxCmdsPerUpdate: 1,
-		UserID:           "abc-123-def-456",
+		HostURL:          "abc.com",
+		User: &common.User{
+			Email:         "foobarfoo@gmail.com",
+			FirstName:     "henry",
+			LastName:      "warren",
+			MachineSerial: "xycj2oijdas",
+			Username:      "foo.bar",
+		},
 	}
 	genDummyYamlFile(expectedCfg)
 	defer cleanupDummyYamlFile()
@@ -56,11 +64,11 @@ func TestParseConfig(t *testing.T) {
 	if expectedCfg.UpdateFrequency != cfg.UpdateFrequency {
 		t.Errorf("UpdateFrequency not the same")
 	}
+	if expectedCfg.HostURL != cfg.HostURL {
+		t.Errorf("HostURL not the same")
+	}
 	if expectedCfg.MaxCmdsPerUpdate != cfg.MaxCmdsPerUpdate {
 		t.Errorf("MaxCmdsPerUpdate not the same")
-	}
-	if expectedCfg.UserID != cfg.UserID {
-		t.Errorf("UserID not the same")
 	}
 }
 
@@ -84,7 +92,14 @@ func TestParseConfig_Malformatted_Error(t *testing.T) {
 		ShellPipe:        ".",
 		UpdateFrequency:  int64(0),
 		MaxCmdsPerUpdate: 1,
-		UserID:           "abc-123-def-456",
+		HostURL:          "abc.com",
+		User: &common.User{
+			Email:         "foobarfoo@gmail.com",
+			FirstName:     "henry",
+			LastName:      "warren",
+			MachineSerial: "xycj2oijdas",
+			Username:      "foo.bar",
+		},
 	}
 	genBadDummyYamlFile(expectedCfg)
 	defer cleanupDummyYamlFile()

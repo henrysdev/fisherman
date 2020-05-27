@@ -5,9 +5,9 @@ defmodule FishermanServer.ShellRecord do
   @primary_key {:uuid, Ecto.UUID, autogenerate: true}
   schema "shell_records" do
     field :command, :string
-    field :command_timestamp, :naive_datetime
+    field :command_timestamp, :utc_datetime_usec
     field :error, :string
-    field :error_timestamp, :naive_datetime
+    field :error_timestamp, :utc_datetime_usec
     field :user_id, Ecto.UUID
     field :pid, :string
 

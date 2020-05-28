@@ -3,25 +3,26 @@ defmodule FishermanServerWeb.Live.ShellRecordsTable.ShellRecordComponent do
   # the line below would be: use MyAppWeb, :live_component
   use Phoenix.LiveComponent
 
+  @impl
   def render(assigns) do
-    # TODO move any static styling to CSS file
     ~L"""
-    <style>
-      .shell-record {
-        position: absolute;
-        overflow: scroll;
-        border-radius: 8px;
-      }
-    </style>
-
     <div class="shell-record"
     style="top: <%= @y_offset %>rem;
-          width: <%= @pid_col_width %>rem;
           height: <%= @height %>rem;
-          background-color: <%= @pid_color %>;"
-    id="<%= Map.get(@record, "uuid") %>">
-      <p><%= get_in(@record, ["new_row_data", "command"]) %></p>
+          background-color: <%= pick_color(@record) %>;"
+    id="<%= @record.uuid %>">
+      <strong><%= @record.command %></strong>
     </div>
     """
+  end
+
+  @impl
+  # TODO pull colors out to constants file
+  def pick_color(%{error: error}) do
+    if Enum.member?(["", nil], error) do
+      "#a0cf93"
+    else
+      "#f79292"
+    end
   end
 end

@@ -7,31 +7,38 @@ defmodule FishermanServerWeb.Live.ShellRecordsTableComponent do
   def render(assigns) do
     # TODO move any static styling to CSS file
     ~L"""
-    <style>
-      td {
-        position: relative;
-        height: 5rem;
-      }
-      table, th, td {
-        border: 1px solid black;
-        border-collapse: collapse;
-      }
-    </style>
+    <div>
 
-    <nobr>
-      <!-- time column -->
+      <!-- column headers -->
+      <section class="swimlanes">
+        <div style="text-align: center; width: <%= @row_info.time_axis_width %>rem">
+          time (UTC)
+        </div>
+        <%= for pid <- @pids do %>
+          <div class="swimlanes__title">
+            <h3 style="text-align:center">PID #{pid.name}</h3>
+          </div>
+        <% end %>
+      </section>
+
+      <!-- columns -->
+      <section class="swimlanes"
+        style="overflow:auto;
+        max-height:100%;
+        height: <%= @row_info.num_rows * @row_info.row_height %>rem">
       <%= live_component @socket,
-        FishermanServerWeb.Live.ShellRecordsTable.TimeAxisComponent,
-        row_info: @row_info %>
-      <!-- pid columns -->
+            FishermanServerWeb.Live.ShellRecordsTable.TimeAxisComponent,
+            row_info: @row_info %>
       <%= for pid <- @pids do %>
         <%= live_component @socket,
           FishermanServerWeb.Live.ShellRecordsTable.PidColumnComponent,
           pid: pid,
           row_info: @row_info,
-          records: @records |> Enum.filter(&pid.name==get_in(&1, ["new_row_data", "pid"])) %>
+          records: @records |> Enum.filter(&pid.name==&1.pid) %>
       <% end %>
-    </nobr>
+      </section>
+      
+    </div>
     """
   end
 end

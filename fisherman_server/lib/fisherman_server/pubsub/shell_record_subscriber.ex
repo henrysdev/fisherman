@@ -19,7 +19,6 @@ defmodule FishermanServer.Pubsub.ShellRecordSubscriber do
   end
 
   def handle_info({:new, msg}, state) do
-    IO.inspect({:SUBSCRIBER_RECV, msg})
     {:noreply, state}
   end
 end

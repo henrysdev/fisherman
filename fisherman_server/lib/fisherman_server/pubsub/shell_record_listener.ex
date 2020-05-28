@@ -31,8 +31,6 @@ defmodule FishermanServer.Pubsub.ShellRecordListener do
       payload
       |> decode!()
 
-    IO.inspect({:RESP, resp})
-
     Phoenix.PubSub.broadcast(FishermanServer.PubSub, "shell_records", {:new, resp})
 
     {:noreply, :event_handled}

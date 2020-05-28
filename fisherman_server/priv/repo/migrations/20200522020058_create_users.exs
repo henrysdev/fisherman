@@ -10,7 +10,7 @@ defmodule FishermanServer.Repo.Migrations.CreateUsers do
       add :username, :string, null: false
       add :machine_serial, :string
 
-      timestamps([type: :utc_datetime_usec])
+      timestamps(type: :utc_datetime_usec)
     end
 
     alter table(:users) do

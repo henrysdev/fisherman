@@ -10,7 +10,7 @@ defmodule FishermanServer.Repo.Migrations.CreateShellRecords do
       add :command_timestamp, :utc_datetime_usec, null: false
       add :error_timestamp, :utc_datetime_usec
 
-      timestamps([type: :utc_datetime_usec])
+      timestamps(type: :utc_datetime_usec)
     end
 
     alter table(:shell_records) do

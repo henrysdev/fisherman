@@ -16,7 +16,7 @@ defmodule FishermanServerWeb.Live.ShellRecordsTableComponent do
         </div>
         <%= for pid <- @pids do %>
           <div class="swimlanes__title">
-            <h3 style="text-align:center">PID #{pid.name}</h3>
+            <h3 style="text-align:center">PID <%= pid %></h3>
           </div>
         <% end %>
       </section>
@@ -34,7 +34,7 @@ defmodule FishermanServerWeb.Live.ShellRecordsTableComponent do
           FishermanServerWeb.Live.ShellRecordsTable.PidColumnComponent,
           pid: pid,
           row_info: @row_info,
-          records: @records |> Enum.filter(&pid.name==&1.pid) %>
+          records: @records |> Enum.filter(&pid==&1.pid) %>
       <% end %>
       </section>
       

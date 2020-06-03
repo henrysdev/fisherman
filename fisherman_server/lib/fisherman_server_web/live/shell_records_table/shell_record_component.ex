@@ -16,7 +16,6 @@ defmodule FishermanServerWeb.Live.ShellRecordsTable.ShellRecordComponent do
     """
   end
 
-  @impl
   # TODO pull colors out to constants file
   def pick_color(%{error: error}) do
     if Enum.member?(["", nil], error) do

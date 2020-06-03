@@ -4,6 +4,8 @@ defmodule FishermanServerWeb.CommandFeedController do
 
   # Live tail view for user initialized w/ 24 hours historical shell data
   def index(conn, %{"user_id" => user_id, "from_ts" => from_ts}) do
+    IO.inspect(conn)
+
     live_render(conn, FishermanServerWeb.CommandFeedLive,
       session: %{
         "user_id" => user_id,

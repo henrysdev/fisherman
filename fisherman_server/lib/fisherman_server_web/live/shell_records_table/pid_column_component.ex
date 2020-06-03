@@ -22,7 +22,6 @@ defmodule FishermanServerWeb.Live.ShellRecordsTable.PidColumnComponent do
     """
   end
 
-  @impl
   def calc_y_offset(record, row_info) do
     %{
       num_rows: num_rows,
@@ -40,7 +39,6 @@ defmodule FishermanServerWeb.Live.ShellRecordsTable.PidColumnComponent do
     ts_ratio * total_col_area
   end
 
-  @impl
   def calc_height(record, row_info) do
     %{
       num_rows: num_rows,

@@ -40,10 +40,13 @@ func (s *ShellProcess) PushStderr(stderr *common.Stderr) *common.ExecutionRecord
 	record := &common.ExecutionRecord{
 		PID:     s.PID,
 		Command: s.NextRecord.Command,
+		Stderr: &common.Stderr{
+			Timestamp: stderr.Timestamp,
+		},
 	}
 	// Only set stderr is there was actual error content
 	if stderr.Line != "" {
-		record.Stderr = stderr
+		record.Stderr.Line = stderr.Line
 	}
 	s.NextRecord.Command = nil
 	s.NextRecord.Stderr = nil

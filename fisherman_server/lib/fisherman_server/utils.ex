@@ -5,4 +5,9 @@ defmodule FishermanServer.Utils do
   end
 
   def unix_millis_to_dt(_), do: nil
+
+  def pg_json_millis_to_dt(millis) do
+    (millis <> "Z")
+    |> Timex.Parse.DateTime.Parser.parse!("{ISO:Extended:Z}")
+  end
 end

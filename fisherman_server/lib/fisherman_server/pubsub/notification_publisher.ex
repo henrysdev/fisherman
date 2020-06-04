@@ -1,9 +1,11 @@
-defmodule FishermanServer.Pubsub.ShellRecordListener do
+defmodule FishermanServer.Pubsub.NotificationPublisher do
   use GenServer
+
+  alias FishermanServer.Utils
 
   require Logger
 
-  import Poison, only: [decode!: 1]
+  @channel_name "notify_feed_refresh"
 
   @doc """
   Initialize the GenServer
@@ -27,11 +29,15 @@ defmodule FishermanServer.Pubsub.ShellRecordListener do
   Listen for changes to shell records inserts
   """
   def handle_info({:notification, _pid, _ref, "shell_record_inserts", payload}, _state) do
-    resp =
+    notif =
       payload
-      |> decode!()
+      |> Poison.decode!()
+      |> Map.update!("command_timestamp", &Utils.pg_json_millis_to_dt(&1))
+      |> Map.update!("error_timestamp", &Utils.pg_json_millis_to_dt(&1))
 
-    Phoenix.PubSub.broadcast(FishermanServer.PubSub, "shell_records", {:new, resp})
+    IO.inspect({:NOTIF, notif})
+
+    Phoenix.PubSub.broadcast(FishermanServer.PubSub, @channel_name, {:notify, notif})
 
     {:noreply, :event_handled}
   end

@@ -1,4 +1,8 @@
-defmodule FishermanServer.Pubsub.ShellRecordSubscriber do
+defmodule FishermanServer.Pubsub.Subscriber do
+  @moduledoc """
+  SAVE FOR EXAMPLE
+  """
+
   use GenServer
 
   def start_link() do

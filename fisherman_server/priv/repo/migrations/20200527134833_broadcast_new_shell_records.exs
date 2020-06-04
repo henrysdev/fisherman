@@ -14,12 +14,7 @@ defmodule FishermanServer.Repo.Migrations.BroadcastNewShellRecords do
         END IF;
       PERFORM pg_notify(
           'shell_record_inserts',
-          json_build_object(
-            'table', TG_TABLE_NAME,
-            'type', TG_OP,
-            'uuid', current_row.uuid,
-            'new_row_data', row_to_json(NEW)
-          )::text
+          row_to_json(NEW)::text
         );
       RETURN current_row;
       END;

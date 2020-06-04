@@ -47,7 +47,7 @@ func TestPushStderr(t *testing.T) {
 	if expectedRecord.Command != record.Command {
 		t.Error("record command should be equal to expected record command")
 	}
-	if expectedRecord.Stderr != record.Stderr {
+	if expectedRecord.Stderr.Line != record.Stderr.Line {
 		t.Error("record stderr should be equal to expected record stderr")
 	}
 	if shellProcess.NextRecord.Command != nil {
@@ -71,15 +71,18 @@ func TestPushStderr_WhenNilCommand_Nil(t *testing.T) {
 	}
 }
 
-func TestPushStderr_WhenEmptyStderr_NoStderr(t *testing.T) {
+func TestPushStderr_WhenEmptyStderr_JustTimestamp(t *testing.T) {
 	// Arrange
+	ts := time.Now().UnixNano() / 1000000
 	emptyStderr := &common.Stderr{
 		Line:      "",
-		Timestamp: time.Now().UnixNano() / 1000000,
+		Timestamp: ts,
 	}
 	expectedRecord := &common.ExecutionRecord{
 		Command: command,
-		Stderr:  nil,
+		Stderr: &common.Stderr{
+			Timestamp: ts,
+		},
 	}
 	shellProcess := NewShellProcess(pid, command)
 
@@ -90,8 +93,8 @@ func TestPushStderr_WhenEmptyStderr_NoStderr(t *testing.T) {
 	if expectedRecord.Command != record.Command {
 		t.Error("record command should be equal to expected record command")
 	}
-	if expectedRecord.Stderr != nil {
-		t.Error("record stderr should be nil")
+	if expectedRecord.Stderr.Line != record.Stderr.Line {
+		t.Error("record stderr line should be nil")
 	}
 	if shellProcess.NextRecord.Command != nil {
 		t.Error("Field `command` should've be cleared")

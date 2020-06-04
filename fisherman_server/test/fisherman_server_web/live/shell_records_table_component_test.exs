@@ -7,10 +7,10 @@ defmodule FishermanServerWeb.ShellRecordsTableComponentTest do
     conn =
       get(conn, "/cmdfeed", %{
         "user_id" => "abc123",
-        "from_ts" => 1_590_655_333_769
+        "from_ts" => 1_590_655_333_769 |> DateTime.from_unix!(:millisecond)
       })
 
-    assert html_response(conn, 200) =~ "time (UTC)"
+    assert html_response(conn, 200) =~ "Time (UTC)"
 
     {:ok, _view, _html} = live(conn)
   end

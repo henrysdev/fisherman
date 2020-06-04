@@ -7,16 +7,16 @@ defmodule FishermanServerWeb.Live.ShellRecordsTable.ShellRecordComponent do
   def render(assigns) do
     ~L"""
     <div class="shell-record"
-    style="top: <%= @y_offset %>rem;
+      style="top: <%= @y_offset %>rem;
           height: <%= @height %>rem;
           background-color: <%= pick_color(@record) %>;"
-    id="<%= @record.uuid %>">
+      id="<%= @record.uuid %>"
+    >
       <strong><%= @record.command %></strong>
     </div>
     """
   end
 
-  @impl
   # TODO pull colors out to constants file
   def pick_color(%{error: error}) do
     if Enum.member?(["", nil], error) do

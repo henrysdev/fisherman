@@ -22,16 +22,13 @@ defmodule FishermanServerWeb.ShellFeedLive do
     """
   end
 
-  def mount(params, %{"user_id" => user_id, "first_ts" => first_ts} = session, socket) do
+  def mount(params, %{"user_id" => user_id, "first_ts" => curr_dt} = session, socket) do
     # On mount, subscribe to appropriate feed
     Phoenix.PubSub.subscribe(FishermanServer.PubSub, @notify_channel)
 
-    IO.inspect({:PARAMS, params})
-    IO.inspect({:SESSION, session})
-    IO.inspect({:SOCKET, socket})
-
     # Start live feed polling from current timestamp
-    state = refresh_feed_state(first_ts, user_id)
+    first_ts = curr_dt |> DateTime.to_unix(:millisecond)
+    state = refresh_feed_state(first_ts, curr_dt, user_id)
 
     {:ok, assign(socket, state: state)}
   end
@@ -39,9 +36,13 @@ defmodule FishermanServerWeb.ShellFeedLive do
   @doc """
   Subscriber callback for postgres notify messages
   """
-  def handle_info({:notify, %{command_timestamp: cmd_dt, user_id: user_id} = notif}, socket) do
+  def handle_info(
+        {:notify, %{"command_timestamp" => cmd_dt, "user_id" => user_id} = notif},
+        socket
+      ) do
     # Pull feed records since time of executed command in notification
-    state = refresh_feed_state(cmd_dt, user_id)
+    first_ts = socket.assigns.state.row_info.first_ts
+    state = refresh_feed_state(first_ts, cmd_dt, user_id)
 
     {:noreply, assign(socket, state: state)}
   end
@@ -49,11 +50,11 @@ defmodule FishermanServerWeb.ShellFeedLive do
   @doc """
   Query for records since the given timestamp
   """
-  defp refresh_feed_state(lower_dt_bound, user_id) do
-    first_ts = DateTime.to_unix(lower_dt_bound, :millisecond)
+  defp refresh_feed_state(first_ts, curr_dt, user_id) do
     latest_ts = DateTime.utc_now() |> DateTime.to_unix(:millisecond)
     {:ok, user_uuid} = Ecto.UUID.dump(user_id)
-    records = DB.Query.shell_records_since_dt(lower_dt_bound, user_uuid)
+    first_dt = first_ts |> DateTime.from_unix!(:millisecond)
+    records = DB.Query.shell_records_since_dt(first_dt, user_uuid)
 
     %{
       records: records,

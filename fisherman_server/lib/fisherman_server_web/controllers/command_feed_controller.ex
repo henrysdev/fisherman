@@ -3,13 +3,11 @@ defmodule FishermanServerWeb.CommandFeedController do
   import Phoenix.LiveView.Controller
 
   # Live tail view for user initialized w/ 24 hours historical shell data
-  def index(conn, %{"user_id" => user_id, "from_ts" => from_ts}) do
-    IO.inspect(conn)
-
-    live_render(conn, FishermanServerWeb.CommandFeedLive,
+  def index(conn, %{"user_id" => user_id}) do
+    live_render(conn, FishermanServerWeb.ShellFeedLive,
       session: %{
         "user_id" => user_id,
-        "from_ts" => from_ts
+        "first_ts" => DateTime.utc_now() |> DateTime.add(-10, :second)
       }
     )
   end

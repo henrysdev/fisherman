@@ -15,9 +15,8 @@ defmodule FishermanServer.Application do
       {Phoenix.PubSub, name: FishermanServer.PubSub},
       # Start the Endpoint (http/https)
       FishermanServerWeb.Endpoint,
-      # Start a worker by calling: FishermanServer.Worker.start_link(arg)
-      # {FishermanServer.Worker, arg}
-      {FishermanServer.Pubsub.ShellRecordListener, "shell_record_inserts"}
+      # Start the NotificationPublisher
+      {FishermanServer.Pubsub.NotificationPublisher, "shell_record_inserts"}
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html

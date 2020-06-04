@@ -1,12 +1,20 @@
 
 .shell-record {
-    position: relative;
+    position: absolute;
     // overflow: scroll;
     text-align: left;
     border-radius: 4px;
     width: 100%;
     opacity: 88%;
-    box-shadow: 2px 2px 4px 1px #888888;
+    // box-shadow: 2px 2px 4px 1px #888888;
+}
+
+.time-axis {
+  margin: 0.5rem;
+}
+
+.time-tick {
+  border: 1px black solid;
 }
 
 /* mobile first layout: Swimlanes are vertically stacked to begin with. */
@@ -17,12 +25,13 @@
     
     /* The swimlanes__column element groups the heading and the list */
     &__column {
-    min-width: 15rem; /* this is what makes the concept legible when there are many swimlanes */
-    flex: 1;  /* to keep everything equally sized */
-    background: #F2F2F3;  /* replace with casper color variable */
-    padding: 0.5rem;
-    border-radius: 0.5rem;
-       margin: 0.5rem;
+      position: relative;
+      min-width: 15rem; /* this is what makes the concept legible when there are many swimlanes */
+      flex: 1;  /* to keep everything equally sized */
+      background: #F2F2F3;  /* replace with casper color variable */
+      // padding: 0.5rem;
+      border-radius: 0.5rem;
+      margin: 0.5rem;
     }
     
     /*  nuke the ULs inherited margin and padding  */  

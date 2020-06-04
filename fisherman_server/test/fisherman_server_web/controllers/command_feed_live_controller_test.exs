@@ -9,10 +9,9 @@ defmodule FishermanServerWeb.CommandFeedLiveControllerTest do
   test "GET /cmdfeed with query params", %{conn: conn} do
     conn =
       get(conn, "/cmdfeed", %{
-        "user_id" => "abc123",
-        "from_ts" => 1_590_655_333_769
+        "user_id" => "abc123"
       })
 
-    assert html_response(conn, 200) =~ "time (UTC)"
+    assert html_response(conn, 200) =~ "Time (UTC)"
   end
 end

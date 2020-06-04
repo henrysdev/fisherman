@@ -17,11 +17,11 @@ defmodule FishermanServerWeb.ShellRecordComponentTest do
     }
 
     expected_render = [
-      "<div class=\"shell-record\"\nstyle=\"top: ",
+      "<div class=\"shell-record\"\n  style=\"top: ",
       "rem;\n      height: ",
       "rem;\n      background-color: ",
-      ";\"\nid=\"",
-      "\">\n  <strong>",
+      ";\"\n  id=\"",
+      "\"\n>\n  <strong>",
       "</strong>\n</div>\n"
     ]
 

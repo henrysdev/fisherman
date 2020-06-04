@@ -22,7 +22,7 @@ defmodule FishermanServerWeb.ShellFeedLive do
     """
   end
 
-  def mount(params, %{"user_id" => user_id, "first_ts" => curr_dt} = session, socket) do
+  def mount(params, %{"user_id" => user_id, "from_ts" => curr_dt} = session, socket) do
     # On mount, subscribe to appropriate feed
     Phoenix.PubSub.subscribe(FishermanServer.PubSub, @notify_channel)
 

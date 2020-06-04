@@ -50,6 +50,6 @@ defmodule FishermanServerWeb.PidColumnComponentTest do
     [record | _] = @records
     actual_y_offset = PidColumnComponent.calc_y_offset(record, @row_info)
 
-    assert actual_y_offset == 7.0
+    assert actual_y_offset == 3.5
   end
 end

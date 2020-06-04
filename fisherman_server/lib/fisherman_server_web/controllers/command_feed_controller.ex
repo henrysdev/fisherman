@@ -7,7 +7,7 @@ defmodule FishermanServerWeb.CommandFeedController do
     live_render(conn, FishermanServerWeb.ShellFeedLive,
       session: %{
         "user_id" => user_id,
-        "first_ts" => DateTime.utc_now() |> DateTime.add(-10, :second)
+        "from_ts" => DateTime.utc_now() |> DateTime.add(-10, :second)
       }
     )
   end

@@ -13,8 +13,7 @@ defmodule FishermanServerWeb.TimeAxisComponentTest do
       time_axis_width: 12
     }
 
-    expected_render = ["<div style=\"width: ", "rem\">\n\n  ", "\n\n</div>\n"]
-
+    expected_render = ["<div class=\"time-axis\" width: ", ">\n\n  ", "\n\n</div>\n"]
     rendered = TimeAxisComponent.render(%{row_info: row_info})
 
     assert rendered.static == expected_render

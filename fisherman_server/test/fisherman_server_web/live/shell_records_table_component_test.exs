@@ -3,11 +3,14 @@ defmodule FishermanServerWeb.ShellRecordsTableComponentTest do
   import Phoenix.ConnTest
   import Phoenix.LiveViewTest
 
+  alias FishermanServer.TestFns
+
   test "disconnected and connected mount", %{conn: conn} do
+    {:ok, user} = TestFns.new_user()
+
     conn =
       get(conn, "/cmdfeed", %{
-        "user_id" => "abc123",
-        "from_ts" => 1_590_655_333_769 |> DateTime.from_unix!(:millisecond)
+        "user_id" => user.uuid
       })
 
     assert html_response(conn, 200) =~ "Time (UTC)"

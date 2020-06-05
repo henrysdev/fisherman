@@ -22,7 +22,7 @@ defmodule FishermanServerWeb.ShellFeedLive do
     """
   end
 
-  def mount(params, %{"user_id" => user_id, "from_ts" => curr_dt} = session, socket) do
+  def mount(_params, %{"user_id" => user_id, "from_ts" => curr_dt} = _session, socket) do
     # On mount, subscribe to appropriate feed
     Phoenix.PubSub.subscribe(FishermanServer.PubSub, @notify_channel)
 
@@ -54,10 +54,9 @@ defmodule FishermanServerWeb.ShellFeedLive do
     latest_ts = DateTime.utc_now() |> DateTime.to_unix(:millisecond)
     {:ok, user_uuid} = Ecto.UUID.dump(user_id)
     first_dt = first_ts |> DateTime.from_unix!(:millisecond)
-    records = DB.Query.shell_records_since_dt(first_dt, user_uuid)
 
     %{
-      records: records,
+      records: DB.Query.shell_records_since_dt(first_dt, user_uuid),
       row_info: %{
         latest_ts: latest_ts,
         first_ts: first_ts,

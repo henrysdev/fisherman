@@ -1,4 +1,4 @@
-defmodule FishermanServerWeb.CommandFeedLiveControllerTest do
+defmodule FishermanServerWeb.ShellFeedControllerTest do
   use FishermanServerWeb.ConnCase
 
   alias FishermanServer.TestFns

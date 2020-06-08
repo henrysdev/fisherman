@@ -18,14 +18,15 @@ defmodule FishermanServer.TestFns do
     FishermanServer.Repo.insert(user)
   end
 
-  %FishermanServer.ShellRecord{
+  @default_shell_record %FishermanServer.ShellRecord{
     command: "cat somefile",
-    command_timestamp: 1_591_381_246_266,
+    command_timestamp: DateTime.utc_now(),
     error: "exit status 1",
-    error_timestamp: 1_591_381_303_785
+    error_timestamp: DateTime.utc_now() |> DateTime.add(1, :second),
+    pid: "123"
   }
 
-  def new_shell_record(shell_record) do
-    FishermanServer.Repo.shell_record(shell_record)
+  def new_shell_record(shell_record \\ @default_shell_record) do
+    FishermanServer.Repo.insert(shell_record)
   end
 end

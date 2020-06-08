@@ -1,4 +1,4 @@
-defmodule FishermanServer.Pubsub.NotificationPublisher do
+defmodule FishermanServer.NotificationPublisher do
   use GenServer
 
   alias FishermanServer.Utils
@@ -35,12 +35,18 @@ defmodule FishermanServer.Pubsub.NotificationPublisher do
       |> Map.update!("command_timestamp", &Utils.pg_json_millis_to_dt(&1))
       |> Map.update!("error_timestamp", &Utils.pg_json_millis_to_dt(&1))
 
-    IO.inspect({:NOTIF, notif})
-
-    Phoenix.PubSub.broadcast(FishermanServer.PubSub, @channel_name, {:notify, notif})
+    Phoenix.PubSub.broadcast(
+      FishermanServer.PubSub,
+      channel_name(Map.get(notif, "user_id")),
+      {:notify, notif}
+    )
 
     {:noreply, :event_handled}
   end
 
   def handle_info(_, _state), do: {:noreply, :event_received}
+
+  def channel_name(user_id) do
+    "#{@channel_name}:#{user_id}"
+  end
 end

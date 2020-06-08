@@ -1,8 +1,8 @@
-defmodule FishermanServerWeb.CommandFeedController do
+defmodule FishermanServerWeb.ShellFeedController do
   use FishermanServerWeb, :controller
   import Phoenix.LiveView.Controller
 
-  # Live tail view for user initialized w/ 24 hours historical shell data
+  # Live tail view for user
   def index(conn, %{"user_id" => user_id}) do
     live_render(conn, FishermanServerWeb.ShellFeedLive,
       session: %{

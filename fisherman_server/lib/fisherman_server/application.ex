@@ -16,7 +16,7 @@ defmodule FishermanServer.Application do
       # Start the Endpoint (http/https)
       FishermanServerWeb.Endpoint,
       # Start the NotificationPublisher
-      {FishermanServer.Pubsub.NotificationPublisher, "shell_record_inserts"}
+      {FishermanServer.NotificationPublisher, "shell_record_inserts"}
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html

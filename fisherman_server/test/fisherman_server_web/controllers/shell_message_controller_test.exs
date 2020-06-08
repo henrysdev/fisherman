@@ -1,20 +1,10 @@
 defmodule FishermanServerWeb.ShellMessageControllerTest do
   use FishermanServerWeb.ConnCase
 
-  defp new_user() do
-    user = %FishermanServer.User{
-      username: "foo.bar",
-      email: "foobarfoo@gmail.com",
-      machine_serial: "xycj2oijdas",
-      first_name: "henry",
-      last_name: "warren"
-    }
-
-    FishermanServer.Repo.insert(user)
-  end
+  alias FishermanServer.TestFns
 
   test "POST /shellmsg", %{conn: conn} do
-    {:ok, %FishermanServer.User{uuid: user_id}} = new_user()
+    {:ok, %FishermanServer.User{uuid: user_id}} = TestFns.new_user()
 
     conn =
       post(conn, "/shellmsg", %{
@@ -38,7 +28,7 @@ defmodule FishermanServerWeb.ShellMessageControllerTest do
   end
 
   test "POST /shellmsg should raise error due to no pid", %{conn: conn} do
-    {:ok, %FishermanServer.User{uuid: user_id}} = new_user()
+    {:ok, %FishermanServer.User{uuid: user_id}} = TestFns.new_user()
 
     resp =
       try do

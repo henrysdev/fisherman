@@ -18,7 +18,7 @@ defmodule FishermanServerWeb.Router do
     pipe_through :browser
 
     get "/", PageController, :index
-    get "/cmdfeed", CommandFeedController, :index
+    get "/cmdfeed", ShellFeedController, :index
   end
 
   scope "/shellmsg", FishermanServerWeb do

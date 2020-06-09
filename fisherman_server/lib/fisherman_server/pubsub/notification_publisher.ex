@@ -1,4 +1,8 @@
 defmodule FishermanServer.NotificationPublisher do
+  @moduledoc """
+  Publisher of postgres notify messages sent on insert of shell records
+  """
+
   use GenServer
 
   alias FishermanServer.Utils

@@ -1,9 +1,9 @@
 defmodule FishermanServerWeb.Live.ShellRecordsTableComponent do
-  # If you generated an app with mix phx.new --live,
-  # the line below would be: use MyAppWeb, :live_component
+  @moduledoc """
+  Container for shell records live feed table view.
+  """
   use Phoenix.LiveComponent
 
-  @impl
   def render(assigns) do
     ~L"""
     <div>
@@ -38,7 +38,6 @@ defmodule FishermanServerWeb.Live.ShellRecordsTableComponent do
         <% end %>
         </section>
 
-      
     </div>
     """
   end

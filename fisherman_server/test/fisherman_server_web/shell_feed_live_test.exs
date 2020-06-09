@@ -5,20 +5,19 @@ defmodule FishermanServerWeb.ShellFeedLiveTest do
   alias FishermanServer.TestFns
 
   test "renders expected feed", %{conn: conn} do
-    conn = get(conn, "/cmdfeed")
+    conn = get(conn, "/shellfeed")
     assert html_response(conn, 200) =~ "Welcome to Phoenix!"
   end
 
-  test "GET /cmdfeed with valid user query param", %{conn: conn} do
-    {:ok, user} = TestFns.new_user()
+  test "GET /shellfeed with valid user query param", %{conn: conn} do
+    user = TestFns.add_user!()
 
     conn =
-      get(conn, "/cmdfeed", %{
+      get(conn, "/shellfeed", %{
         "user_id" => user.uuid
       })
 
     # TODO simulate refresh and assert html contents
-    {:ok, _sh_record} = TestFns.new_shell_record()
 
     assert html_response(conn, 200) =~ "Time (UTC)"
   end

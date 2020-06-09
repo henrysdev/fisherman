@@ -6,10 +6,10 @@ defmodule FishermanServerWeb.ShellRecordsTableComponentTest do
   alias FishermanServer.TestFns
 
   test "disconnected and connected mount", %{conn: conn} do
-    {:ok, user} = TestFns.new_user()
+    user = TestFns.add_user!()
 
     conn =
-      get(conn, "/cmdfeed", %{
+      get(conn, "/shellfeed", %{
         "user_id" => user.uuid
       })
 
@@ -19,6 +19,6 @@ defmodule FishermanServerWeb.ShellRecordsTableComponentTest do
   end
 
   test "no session error on mount", %{conn: conn} do
-    assert {:error, :nosession} = live(conn, "cmdfeed")
+    assert {:error, :nosession} = live(conn, "shellfeed")
   end
 end

@@ -14,8 +14,12 @@ defmodule FishermanServer.TestFns do
     last_name: "warren"
   }
 
-  def new_user(user \\ @default_user) do
-    FishermanServer.Repo.insert(user)
+  def gen_user() do
+    @default_user
+  end
+
+  def add_user!(user \\ @default_user) do
+    FishermanServer.Repo.insert!(user)
   end
 
   @default_shell_record %FishermanServer.ShellRecord{
@@ -26,7 +30,11 @@ defmodule FishermanServer.TestFns do
     pid: "123"
   }
 
-  def new_shell_record(shell_record \\ @default_shell_record) do
-    FishermanServer.Repo.insert(shell_record)
+  def gen_shell_record() do
+    @default_shell_record
+  end
+
+  def add_shell_record!(shell_record \\ @default_shell_record) do
+    FishermanServer.Repo.insert!(shell_record)
   end
 end

@@ -6,39 +6,42 @@ defmodule FishermanServerWeb.Live.ShellRecordsTableComponent do
 
   def render(assigns) do
     ~L"""
-    <div>
+      <!-- hooks -->
+      <div phx-hook="ScrollAdjust"/>
 
-      <!-- column headers -->
-      <section class="swimlanes">
-        <div style="text-align: center; width: <%= @row_info.time_axis_width %>rem">
-          Time (UTC)
+      <!-- headers -->
+      <div class="flexbox-wrapper">
+        <div class="timestamp-axis">
+          <h3 style="text-align: center"> Time (UTC) </h3>
         </div>
-        <%= for pid <- @pids do %>
-          <div class="swimlanes__title">
-            <h3 style="text-align:center">PID <%= pid %></h3>
-          </div>
-        <% end %>
-      </section>
+        <section class="swimlanes fluid-group scrollable" id="pid-axis">
+          <%= for pid <- @pids do %>
+            <div class="swimlanes__title">
+              <h3 style="text-align:center">PID <%= pid %></h3>
+            </div>
+          <% end %>
+        </section>
+      </div>
 
       <!-- columns -->
-        <section class="swimlanes"
-          style="
-          overflow:auto
-          max-height:80vh;
-          height:100%">
-        <%= live_component @socket,
-              FishermanServerWeb.Live.ShellRecordsTable.TimeAxisComponent,
-              row_info: @row_info %>
-        <%= for pid <- @pids do %>
+      <div class="flexbox-wrapper">
+        <div id="time-axis" class="vertical-scrollbox scrollable timestamp-axis">
           <%= live_component @socket,
-            FishermanServerWeb.Live.ShellRecordsTable.PidColumnComponent,
-            pid: pid,
-            row_info: @row_info,
-            records: @records |> Enum.filter(&pid==&1.pid) %>
-        <% end %>
-        </section>
-
-    </div>
+            FishermanServerWeb.Live.ShellRecordsTable.TimeAxisComponent,
+            row_info: @row_info %>
+        </div>
+        <div class="vertical-scrollbox fluid-group">
+          <section class="swimlanes scrollable" id="shellfeed-content">
+            <%= for pid <- @pids do %>
+              <%= live_component @socket,
+                FishermanServerWeb.Live.ShellRecordsTable.PidColumnComponent,
+                pid: pid,
+                row_info: @row_info,
+                records: @records |> Enum.filter(&pid==&1.pid) %>
+            <% end %>
+          </section>
+        </div>
+      </div>
     """
   end
 end

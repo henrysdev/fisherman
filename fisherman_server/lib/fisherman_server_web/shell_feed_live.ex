@@ -15,8 +15,7 @@ defmodule FishermanServerWeb.ShellFeedLive do
   @min_record_height 2.5
   @row_height 3.5
   @pid_col_width 20.0
-  @time_incr 5_000
-  @time_axis_width 20
+  @time_incr 1_000
 
   def render(assigns) do
     ~L"""
@@ -71,7 +70,6 @@ defmodule FishermanServerWeb.ShellFeedLive do
         row_height: @row_height,
         pid_col_width: @pid_col_width,
         time_incr: @time_incr,
-        time_axis_width: @time_axis_width,
         min_record_height: @min_record_height
       }
     }

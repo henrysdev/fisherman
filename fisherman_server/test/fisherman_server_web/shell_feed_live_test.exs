@@ -18,9 +18,8 @@ defmodule FishermanServerWeb.ShellFeedLiveTest do
 
     assert render(view) =~ record.command
     assert render(view) =~ record.pid
+    default_assertions(view)
     assert view |> element(".shell-record") |> has_element?()
-    assert view |> element(".time-axis") |> has_element?()
-    assert view |> element(".time-tick") |> has_element?()
   end
 
   test "renders empty shell feed", %{conn: conn} do
@@ -29,8 +28,14 @@ defmodule FishermanServerWeb.ShellFeedLiveTest do
     conn = get(conn, "/shellfeed", %{"user_id" => user_id})
     {:ok, view, _html} = live(conn)
 
-    assert !(view |> element(".shell-record") |> has_element?())
-    assert view |> element(".time-axis") |> has_element?()
+    default_assertions(view)
+  end
+
+  defp default_assertions(view) do
+    assert view |> element("#shellfeed-content") |> has_element?()
+    assert view |> element("#pid-axis") |> has_element?()
+    assert view |> element("#time-axis") |> has_element?()
+    assert view |> element(".timestamp-axis") |> has_element?()
     assert view |> element(".time-tick") |> has_element?()
   end
 end

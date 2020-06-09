@@ -8,7 +8,6 @@ defmodule FishermanServerWeb.Live.ShellRecordsTable.PidColumnComponent do
   def render(assigns) do
     ~L"""
     <div class="swimlanes__column">
-
       <%= for record <- @records do %>
         <%= live_component @socket,
           FishermanServerWeb.Live.ShellRecordsTable.ShellRecordComponent,
@@ -18,7 +17,6 @@ defmodule FishermanServerWeb.Live.ShellRecordsTable.PidColumnComponent do
           pid_col_width: @row_info.pid_col_width
         %> 
       <% end %>
-
     </div>
     """
   end

@@ -6,15 +6,11 @@ defmodule FishermanServerWeb.Live.ShellRecordsTable.TimeAxisComponent do
 
   def render(assigns) do
     ~L"""
-    <div class="time-axis" width: <%= @row_info.time_axis_width %>>
-
       <%= for ts_tick <- 1..@row_info.num_rows do %>
         <div class="time-tick" style="height: <%= @row_info.row_height %>rem">
           <%= calc_label(@row_info, ts_tick) %>
         </div>
       <% end %>
-
-    </div>
     """
   end
 

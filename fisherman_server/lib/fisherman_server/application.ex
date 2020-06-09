@@ -4,6 +4,8 @@ defmodule FishermanServer.Application do
   @moduledoc false
 
   use Application
+  require FishermanServer.GlobalConstants
+  alias FishermanServer.GlobalConstants, as: Const
 
   def start(_type, _args) do
     children = [
@@ -16,7 +18,7 @@ defmodule FishermanServer.Application do
       # Start the Endpoint (http/https)
       FishermanServerWeb.Endpoint,
       # Start the NotificationPublisher
-      {FishermanServer.NotificationPublisher, "shell_record_inserts"}
+      {FishermanServer.NotificationPublisher, Const.pg_channel()}
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html

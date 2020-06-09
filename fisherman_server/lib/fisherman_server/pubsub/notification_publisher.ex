@@ -3,12 +3,10 @@ defmodule FishermanServer.NotificationPublisher do
   Publisher of postgres notify messages sent on insert of shell records
   """
   use GenServer
-
+  require FishermanServer.GlobalConstants
+  alias FishermanServer.GlobalConstants, as: Const
   alias FishermanServer.Utils
-
   require Logger
-
-  @channel_name "notify_feed_refresh"
 
   @doc """
   Initialize the GenServer
@@ -30,7 +28,7 @@ defmodule FishermanServer.NotificationPublisher do
   Listen for changes to shell records inserts and broadcast to the
   applicable user channels
   """
-  def handle_info({:notification, _pid, _ref, "shell_record_inserts", payload}, _state) do
+  def handle_info({:notification, _pid, _ref, Const.pg_channel(), payload}, _state) do
     notif =
       payload
       |> Poison.decode!()
@@ -46,6 +44,6 @@ defmodule FishermanServer.NotificationPublisher do
   def handle_info(_, _state), do: {:noreply, :event_received}
 
   def channel_name(user_id) do
-    "#{@channel_name}:#{user_id}"
+    "#{Const.channel_name()}:#{user_id}"
   end
 end

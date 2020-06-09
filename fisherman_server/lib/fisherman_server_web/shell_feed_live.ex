@@ -1,6 +1,14 @@
 defmodule FishermanServerWeb.ShellFeedLive do
-  use Phoenix.LiveView
+  @moduledoc """
+  Entry point for shell feed liveview. Mounts a liveview that
+  registers as a subscriber to the user whos history is being
+  recorded.
 
+  The subscriber gets a change-data-capture notify event
+  when a new shell record for a relevant user has been inserted,
+  at which point the view is refreshed.
+  """
+  use Phoenix.LiveView
   alias FishermanServer.DB
 
   @min_rows 3
@@ -14,7 +22,7 @@ defmodule FishermanServerWeb.ShellFeedLive do
     ~L"""
     <%= live_component @socket,
         FishermanServerWeb.Live.ShellRecordsTableComponent,
-        pids: @state.records |> Enum.map(&(&1.pid)) |> Enum.uniq(),
+        pids: active_shells(@state.records),
         records: @state.records,
         row_info: @state.row_info %>
     """
@@ -71,11 +79,13 @@ defmodule FishermanServerWeb.ShellFeedLive do
 
   defp calc_ticks(latest_ts, first_ts, time_incr) do
     delta = abs(first_ts - latest_ts)
-    ticks = div(delta, time_incr) |> max(@min_rows)
-    # IO.inspect({:LATEST_TS, latest_ts})
-    # IO.inspect({:FIRST_TS, first_ts})
-    # IO.inspect({:DELTA, delta})
-    # IO.inspect({:TICKS, ticks})
-    ticks
+    div(delta, time_incr) |> max(@min_rows)
+  end
+
+  defp active_shells(records) do
+    records
+    |> Enum.map(& &1.pid)
+    |> Enum.uniq()
+    |> Enum.sort()
   end
 end

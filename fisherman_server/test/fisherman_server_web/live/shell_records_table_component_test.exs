@@ -2,11 +2,10 @@ defmodule FishermanServerWeb.ShellRecordsTableComponentTest do
   use FishermanServerWeb.ConnCase
   import Phoenix.ConnTest
   import Phoenix.LiveViewTest
-
-  alias FishermanServer.TestFns
+  import FishermanServer.TestFns
 
   test "disconnected and connected mount", %{conn: conn} do
-    user = TestFns.add_user!()
+    user = add_user!()
 
     conn =
       get(conn, "/shellfeed", %{

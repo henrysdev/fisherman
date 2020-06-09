@@ -50,7 +50,7 @@ func (c *Dispatcher) SendCmdHistoryUpdate(commands []*common.ExecutionRecord) er
 
 	// Send request
 	resp, err := c.client.Post(
-		c.hostURL+"/shellmsg", "application/json", bytes.NewBuffer(reqBody))
+		c.hostURL+"/api/shellmsg", "application/json", bytes.NewBuffer(reqBody))
 	if err != nil {
 		return err
 	}
@@ -76,7 +76,7 @@ func (c *Dispatcher) RegisterUser(user *common.User) error {
 
 	// Send request
 	resp, err := c.client.Post(
-		c.hostURL+"/user", "application/json", bytes.NewBuffer(reqBody))
+		c.hostURL+"/api/user", "application/json", bytes.NewBuffer(reqBody))
 	if err != nil {
 		return err
 	}

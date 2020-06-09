@@ -1,9 +1,12 @@
 defmodule FishermanServerWeb.Live.ShellRecordsTable.ShellRecordComponent do
-  # If you generated an app with mix phx.new --live,
-  # the line below would be: use MyAppWeb, :live_component
+  @moduledoc """
+  Component for a rendered shell record object
+  """
   use Phoenix.LiveComponent
 
-  @impl
+  @no_error_color "#a0cf93"
+  @error_color "#f79292"
+
   def render(assigns) do
     ~L"""
     <div class="shell-record"
@@ -17,12 +20,15 @@ defmodule FishermanServerWeb.Live.ShellRecordsTable.ShellRecordComponent do
     """
   end
 
-  # TODO pull colors out to constants file
+  @doc """
+  Determines color of the shell record background on basis
+  of if the command produced an error or not
+  """
   def pick_color(%{error: error}) do
     if Enum.member?(["", nil], error) do
-      "#a0cf93"
+      @no_error_color
     else
-      "#f79292"
+      @error_color
     end
   end
 end

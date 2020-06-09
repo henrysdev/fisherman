@@ -31,7 +31,7 @@ func TestSendCmdHistoryUpdate(t *testing.T) {
 	// Arrange
 	var stubClient http.Client
 	stubClient.Transport = roundTripFunc(func(r *http.Request) (*http.Response, error) {
-		if r.URL.Path != "/shellmsg" {
+		if r.URL.Path != "/api/shellmsg" {
 			t.Errorf("Expected url path to be /shellmsg, got: %v", r.URL.Path)
 		}
 		return &http.Response{
@@ -71,7 +71,7 @@ func TestRegisterUser(t *testing.T) {
 	// Arrange
 	var stubClient http.Client
 	stubClient.Transport = roundTripFunc(func(r *http.Request) (*http.Response, error) {
-		if r.URL.Path != "/user" {
+		if r.URL.Path != "/api/user" {
 			t.Errorf("Expected url path to be /user, got: %v", r.URL.Path)
 		}
 		return &http.Response{
@@ -98,7 +98,7 @@ func TestRegisterUser_WhenBadResponse_Error(t *testing.T) {
 	// Arrange
 	var stubClient http.Client
 	stubClient.Transport = roundTripFunc(func(r *http.Request) (*http.Response, error) {
-		if r.URL.Path != "/user" {
+		if r.URL.Path != "/api/user" {
 			t.Errorf("Expected url path to be /user, got: %v", r.URL.Path)
 		}
 		return nil, errors.New("server error")
@@ -122,7 +122,7 @@ func TestRegisterUser_WhenUnmarshalError_Error(t *testing.T) {
 	// Arrange
 	var stubClient http.Client
 	stubClient.Transport = roundTripFunc(func(r *http.Request) (*http.Response, error) {
-		if r.URL.Path != "/user" {
+		if r.URL.Path != "/api/user" {
 			t.Errorf("Expected url path to be /user, got: %v", r.URL.Path)
 		}
 		return &http.Response{

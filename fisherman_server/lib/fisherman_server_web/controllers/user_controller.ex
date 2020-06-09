@@ -1,4 +1,7 @@
 defmodule FishermanServerWeb.UserController do
+  @moduledoc """
+  Resource controller for User model.
+  """
   use FishermanServerWeb, :controller
 
   alias FishermanServer.{
@@ -6,6 +9,9 @@ defmodule FishermanServerWeb.UserController do
     User
   }
 
+  @doc """
+  Creates and inserts a new user object
+  """
   def create(conn, params) do
     user = handle_user(params)
     json(conn, user)
@@ -20,6 +26,7 @@ defmodule FishermanServerWeb.UserController do
     unmarshal(user)
   end
 
+  # TODO can this be accomplished with a schemaless changeset?
   defp marshal(user = %{}) do
     %User{
       username: get_in(user, ["username"]),

@@ -3,11 +3,11 @@ defmodule FishermanServerWeb.ShellMessageControllerTest do
 
   alias FishermanServer.TestFns
 
-  test "POST /shellmsg", %{conn: conn} do
-    {:ok, %FishermanServer.User{uuid: user_id}} = TestFns.new_user()
+  test "POST /api/shellmsg", %{conn: conn} do
+    %FishermanServer.User{uuid: user_id} = TestFns.add_user!()
 
     conn =
-      post(conn, "/shellmsg", %{
+      post(conn, "/api/shellmsg", %{
         "user_id" => user_id,
         "commands" => [
           %{
@@ -27,12 +27,12 @@ defmodule FishermanServerWeb.ShellMessageControllerTest do
     assert json_response(conn, 200) == %{}
   end
 
-  test "POST /shellmsg should raise error due to no pid", %{conn: conn} do
-    {:ok, %FishermanServer.User{uuid: user_id}} = TestFns.new_user()
+  test "POST /api/shellmsg should raise error due to no pid", %{conn: conn} do
+    %FishermanServer.User{uuid: user_id} = TestFns.add_user!()
 
     resp =
       try do
-        post(conn, "/shellmsg", %{
+        post(conn, "/api/shellmsg", %{
           "user_id" => user_id,
           "commands" => [
             %{
@@ -56,10 +56,10 @@ defmodule FishermanServerWeb.ShellMessageControllerTest do
     assert resp == true
   end
 
-  test "POST /shellmsg should raise error due to no user_id", %{conn: conn} do
+  test "POST /api/shellmsg should raise error due to no user_id", %{conn: conn} do
     resp =
       try do
-        post(conn, "/shellmsg", %{
+        post(conn, "/api/shellmsg", %{
           "commands" => [
             %{
               "pid" => "123",

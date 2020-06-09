@@ -9,7 +9,7 @@
     <ul>
       <li>
         <%= link "Live Feed",
-            to: Routes.shell_feed_path(@conn, :index) %>
+            to: Routes.page_path(@conn, :shellfeed) %>
       </li>
     </ul>
   </article>

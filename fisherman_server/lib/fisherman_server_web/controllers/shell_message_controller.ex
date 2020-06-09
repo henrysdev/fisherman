@@ -1,4 +1,7 @@
 defmodule FishermanServerWeb.ShellMessageController do
+  @moduledoc """
+  Resource controller for ShellMessage model.
+  """
   use FishermanServerWeb, :controller
 
   alias FishermanServer.{
@@ -7,6 +10,9 @@ defmodule FishermanServerWeb.ShellMessageController do
     Utils
   }
 
+  @doc """
+  Store the received shell records sent from the fishermand payload.
+  """
   def create(conn, params) do
     user_id = Map.fetch!(params, "user_id")
 

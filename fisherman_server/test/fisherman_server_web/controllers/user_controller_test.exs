@@ -1,9 +1,9 @@
 defmodule FishermanServerWeb.UserControllerTest do
   use FishermanServerWeb.ConnCase
 
-  test "POST /user", %{conn: conn} do
+  test "POST /api/user", %{conn: conn} do
     conn =
-      post(conn, "/user", %{
+      post(conn, "/api/user", %{
         "username" => "foo.bar",
         "email" => "foobarfoo@gmail.com",
         "machine_serial" => "xycj2oijdas",

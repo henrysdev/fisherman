@@ -1,6 +1,7 @@
 defmodule FishermanServerWeb.Live.ShellRecordsTable.TimeAxisComponent do
-  # If you generated an app with mix phx.new --live,
-  # the line below would be: use MyAppWeb, :live_component
+  @moduledoc """
+  Component for the vertical time axis for the shell record table
+  """
   use Phoenix.LiveComponent
 
   def render(assigns) do
@@ -17,6 +18,9 @@ defmodule FishermanServerWeb.Live.ShellRecordsTable.TimeAxisComponent do
     """
   end
 
+  @doc """
+  Calculates the time label for the given axis tick
+  """
   defp calc_label(row_info, ts_tick) do
     (row_info.first_ts + ts_tick * row_info.time_incr) |> DateTime.from_unix!(:millisecond)
   end

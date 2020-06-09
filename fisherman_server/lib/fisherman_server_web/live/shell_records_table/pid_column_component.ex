@@ -1,9 +1,10 @@
 defmodule FishermanServerWeb.Live.ShellRecordsTable.PidColumnComponent do
-  # If you generated an app with mix phx.new --live,
-  # the line below would be: use MyAppWeb, :live_component
+  @moduledoc """
+  Component for a shell PID column. Parent component to all shell
+  record objects to be drawn under this PID.
+  """
   use Phoenix.LiveComponent
 
-  @impl
   def render(assigns) do
     ~L"""
     <div class="swimlanes__column">
@@ -22,6 +23,10 @@ defmodule FishermanServerWeb.Live.ShellRecordsTable.PidColumnComponent do
     """
   end
 
+  @doc """
+  Calculates the vertical offset from the parent element that
+  the shell record div should have
+  """
   def calc_y_offset(record, row_info) do
     %{
       num_rows: num_rows,
@@ -39,6 +44,9 @@ defmodule FishermanServerWeb.Live.ShellRecordsTable.PidColumnComponent do
     y_offset - row_height
   end
 
+  @doc """
+  Calculates the height of the shell record div
+  """
   def calc_height(record, row_info) do
     %{
       num_rows: num_rows,

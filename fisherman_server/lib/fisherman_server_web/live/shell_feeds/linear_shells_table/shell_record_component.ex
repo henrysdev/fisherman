@@ -1,4 +1,4 @@
-defmodule FishermanServerWeb.Live.ShellRecordsTable.ShellRecordComponent do
+defmodule FishermanServerWeb.Live.LinearShellsTable.ShellRecordComponent do
   @moduledoc """
   Component for a rendered shell record object
   """

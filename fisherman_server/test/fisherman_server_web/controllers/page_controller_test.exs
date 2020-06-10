@@ -7,14 +7,27 @@ defmodule FishermanServerWeb.PageControllerTest do
     assert html_response(conn, 200) =~ "Welcome to Phoenix!"
   end
 
-  test "GET /shellfeed with valid user query param", %{conn: conn} do
+  test "GET /shellfeed linear feed", %{conn: conn} do
     user = add_user!()
 
     conn =
       get(conn, "/shellfeed", %{
-        "user_id" => user.uuid
+        "user_id" => user.uuid,
+        "view" => "linear"
       })
 
     assert html_response(conn, 200) =~ "Time (UTC)"
+  end
+
+  test "GET /shellfeed relative feed", %{conn: conn} do
+    user = add_user!()
+
+    conn =
+      get(conn, "/shellfeed", %{
+        "user_id" => user.uuid,
+        "view" => "relative"
+      })
+
+    assert html_response(conn, 200) =~ "table"
   end
 end

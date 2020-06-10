@@ -1,4 +1,4 @@
-defmodule FishermanServerWeb.Live.ShellRecordsTableComponent do
+defmodule FishermanServerWeb.Live.LinearShellsTable.LinearShellsTableComponent do
   @moduledoc """
   Container for shell records live feed table view.
   """
@@ -27,14 +27,14 @@ defmodule FishermanServerWeb.Live.ShellRecordsTableComponent do
       <div class="flexbox-wrapper">
         <div id="time-axis" class="vertical-scrollbox hide-scrollbar timestamp-axis">
           <%= live_component @socket,
-            FishermanServerWeb.Live.ShellRecordsTable.TimeAxisComponent,
+            FishermanServerWeb.Live.LinearShellsTable.TimeAxisComponent,
             row_info: @row_info %>
         </div>
         <div class="vertical-scrollbox fluid-group">
           <section class="swimlanes" id="shellfeed-content">
             <%= for pid <- @pids do %>
               <%= live_component @socket,
-                FishermanServerWeb.Live.ShellRecordsTable.PidColumnComponent,
+                FishermanServerWeb.Live.LinearShellsTable.PidColumnComponent,
                 pid: pid,
                 row_info: @row_info,
                 records: @records |> Enum.filter(&pid==&1.pid) %>

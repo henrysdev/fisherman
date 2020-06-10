@@ -2,7 +2,7 @@ defmodule FishermanServerWeb.PidColumnComponentTest do
   use FishermanServerWeb.ConnCase
   import Phoenix.LiveViewTest
 
-  alias FishermanServerWeb.Live.ShellRecordsTable.PidColumnComponent
+  alias FishermanServerWeb.Live.LinearShellsTable.PidColumnComponent
 
   @pid "41159"
   @records [

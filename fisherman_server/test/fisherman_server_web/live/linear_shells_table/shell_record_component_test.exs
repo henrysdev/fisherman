@@ -1,7 +1,7 @@
 defmodule FishermanServerWeb.ShellRecordComponentTest do
   use FishermanServerWeb.ConnCase
 
-  alias FishermanServerWeb.Live.ShellRecordsTable.ShellRecordComponent
+  alias FishermanServerWeb.Live.LinearShellsTable.ShellRecordComponent
 
   test "renders as expected" do
     record = %FishermanServer.ShellRecord{

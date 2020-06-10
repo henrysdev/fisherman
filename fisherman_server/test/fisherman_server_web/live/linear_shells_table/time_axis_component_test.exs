@@ -1,7 +1,7 @@
 defmodule FishermanServerWeb.TimeAxisComponentTest do
   use FishermanServerWeb.ConnCase
   import Phoenix.LiveViewTest
-  alias FishermanServerWeb.Live.ShellRecordsTable.TimeAxisComponent
+  alias FishermanServerWeb.Live.LinearShellsTable.TimeAxisComponent
 
   test "renders time axis column" do
     row_info = %{

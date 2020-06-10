@@ -1,4 +1,4 @@
-defmodule FishermanServerWeb.ShellRecordsTableComponentTest do
+defmodule FishermanServerWeb.RelativeShellsTableComponentTest do
   use FishermanServerWeb.ConnCase
   import Phoenix.ConnTest
   import Phoenix.LiveViewTest
@@ -9,10 +9,11 @@ defmodule FishermanServerWeb.ShellRecordsTableComponentTest do
 
     conn =
       get(conn, "/shellfeed", %{
-        "user_id" => user.uuid
+        "user_id" => user.uuid,
+        "view" => "relative"
       })
 
-    assert html_response(conn, 200) =~ "Time (UTC)"
+    assert html_response(conn, 200) =~ "relative-shells-table"
 
     {:ok, _view, _html} = live(conn)
   end

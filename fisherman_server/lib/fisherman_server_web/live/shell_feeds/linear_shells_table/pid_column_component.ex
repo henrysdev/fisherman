@@ -1,4 +1,4 @@
-defmodule FishermanServerWeb.Live.ShellRecordsTable.PidColumnComponent do
+defmodule FishermanServerWeb.Live.LinearShellsTable.PidColumnComponent do
   @moduledoc """
   Component for a shell PID column. Parent component to all shell
   record objects to be drawn under this PID.
@@ -12,7 +12,7 @@ defmodule FishermanServerWeb.Live.ShellRecordsTable.PidColumnComponent do
       max-height:<%= calc_col_height(@row_info) %>rem">
       <%= for record <- @records do %>
         <%= live_component @socket,
-          FishermanServerWeb.Live.ShellRecordsTable.ShellRecordComponent,
+          FishermanServerWeb.Live.LinearShellsTable.ShellRecordComponent,
           record: record,
           y_offset: calc_y_offset(record, @row_info),
           height: calc_height(record, @row_info),

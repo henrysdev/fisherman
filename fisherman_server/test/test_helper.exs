@@ -58,4 +58,12 @@ defmodule FishermanServer.TestFns do
   def add_shell_record!(shell_record \\ gen_shell_record()) do
     Repo.insert!(shell_record)
   end
+
+  def gen_shell_records_for_user(count, user_id \\ nil) do
+    for _ <- 1..count do
+      gen_shell_record()
+      |> Map.put(:user_id, user_id)
+      |> add_shell_record!()
+    end
+  end
 end

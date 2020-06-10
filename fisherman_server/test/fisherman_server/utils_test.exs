@@ -1,7 +1,11 @@
 defmodule FishermanServer.UtilsTest do
-  use ExUnit.Case
+  use FishermanServer.DataCase
+  import FishermanServer.TestFns
 
-  alias FishermanServer.Utils
+  alias FishermanServer.{
+    User,
+    Utils
+  }
 
   test "unix millis to dt " do
     dt = Utils.unix_millis_to_dt(1_591_317_759_447)
@@ -19,24 +23,29 @@ defmodule FishermanServer.UtilsTest do
   end
 
   test "interval sort" do
-    intervals = [
-      {"abc123", {0, 3}},
-      {"def123", {1, 4}},
-      {"ghi123", {2, 3.1}},
-      {"jkl123", {3.5, 7}},
-      {"mno123", {6, 7.5}},
-      {"pqr123", {9, 10}}
+    %User{uuid: user_id} = add_user!()
+    intervals = gen_shell_records_for_user(3, user_id)
+
+    assert [
+             %{end: 3, start: 0},
+             %{end: 4, start: 1},
+             %{end: 5, start: 2}
+           ] = Utils.interval_sort(intervals)
+  end
+
+  test "build table matrix" do
+    %User{uuid: user_id} = add_user!()
+    records = gen_shell_records_for_user(3, user_id)
+    records = [gen_shell_record(user_id: user_id, pid: "def456") | records]
+
+    [_ms1, _ms2] = [
+      MapSet.new([0, 1, 2, 3, 4, 5, 6]),
+      MapSet.new([3, 4, 5, 6, 7])
     ]
 
-    expected = [
-      %{end: 11, id: "pqr123", start: 10},
-      %{end: 9, id: "mno123", start: 7},
-      %{end: 8, id: "jkl123", start: 5},
-      %{end: 4, id: "ghi123", start: 2},
-      %{end: 6, id: "def123", start: 1},
-      %{end: 3, id: "abc123", start: 0}
-    ]
-
-    assert expected == Utils.interval_sort(intervals)
+    assert %{
+             "123" => ms1,
+             "def456" => ms2
+           } = Utils.build_table_matrix(records)
   end
 end

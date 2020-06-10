@@ -39,24 +39,29 @@ defmodule FishermanServer.Utils do
       ends: ends
     } =
       intervals
-      |> Enum.reduce([], fn {id, {sm, em}}, acc ->
+      |> Enum.reduce([], fn %FishermanServer.ShellRecord{
+                              uuid: id,
+                              command_timestamp: sm,
+                              error_timestamp: em
+                            },
+                            acc ->
         [
-          %{val: sm, id: id, bound: 0},
-          %{val: em, id: id, bound: 1}
+          %{ts: sm, id: id, bound: 0},
+          %{ts: em, id: id, bound: 1}
           | acc
         ]
       end)
-      |> Enum.sort(&(&1.val <= &2.val))
+      |> Enum.sort(&(&1.ts <= &2.ts))
       |> Enum.with_index()
       |> Enum.reduce(%{starts: [], ends: %{}}, &split_bounds(&1, &2))
 
     results =
       starts
+      |> Enum.reverse()
       |> Enum.map(fn {%{id: id}, idx} ->
         %{id: id, start: idx, end: Map.get(ends, id)}
       end)
 
-    IO.inspect({:RESULTS, results})
     results
   end
 
@@ -64,7 +69,45 @@ defmodule FishermanServer.Utils do
     Map.update!(acc, :starts, &[boundary | &1])
   end
 
-  defp split_bounds({%{bound: 1, id: id}, rel_order} = boundary, acc) do
+  defp split_bounds({%{bound: 1, id: id}, rel_order} = _boundary, acc) do
     %{starts: acc.starts, ends: Map.put(acc.ends, id, rel_order)}
+  end
+
+  @doc """
+  Build a 2D map of content by row for UI table
+
+  TODO O(n^2)...find way to optimize
+  """
+  def build_table_matrix(records) do
+    # Build lookup of record uuid -> record
+    record_lookup = Enum.reduce(records, %{}, &Map.put(&2, &1.uuid, &1))
+
+    # Maintain a set of occupied bounds for each pid
+    pid_map =
+      records
+      |> Enum.map(& &1.pid)
+      |> Enum.uniq()
+      |> Enum.reduce(%{}, &Map.put(&2, &1, MapSet.new()))
+
+    # Populate occupied bounds for each pid
+    matrix =
+      records
+      |> interval_sort()
+      |> Enum.reduce(pid_map, fn r, acc ->
+        # Fetch whole shell record object from lookup map
+        found_record = Map.get(record_lookup, r.id)
+
+        # Pull out and update set
+        set = Map.get(acc, found_record.pid)
+
+        new_set =
+          r.start..r.end
+          |> Enum.reduce(set, &MapSet.put(&2, &1))
+
+        # Put back into map
+        Map.put(acc, found_record.pid, new_set)
+      end)
+
+    matrix
   end
 end

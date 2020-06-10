@@ -25,6 +25,14 @@ defmodule FishermanServerWeb.ShellFeedLive do
         records: @state.records,
         row_info: @state.row_info %>
     """
+
+    # ~L"""
+    # <%= live_component @socket,
+    #     FishermanServerWeb.Live.RelativeShellsTableComponent,
+    #     pids: active_shells(@state.records),
+    #     records: @state.records,
+    #     row_info: @state.row_info %>
+    # """
   end
 
   def mount(_params, %{"user_id" => user_id, "from_ts" => curr_dt} = _session, socket) do

@@ -1,5 +1,6 @@
-.scrollable::-webkit-scrollbar {
+.hide-scrollbar::-webkit-scrollbar {
   display: none;
+  overflow: hidden;
 }
 
 .flexbox-wrapper{
@@ -45,10 +46,6 @@
     display: flex;
     flex-direction: column;
     height: 100%;
-
-    &__column_group {
-      position: relative;
-    }
     
     /* The swimlanes__column element groups the heading and the list */
     &__column {

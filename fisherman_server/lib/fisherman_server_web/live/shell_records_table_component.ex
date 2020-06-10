@@ -14,7 +14,7 @@ defmodule FishermanServerWeb.Live.ShellRecordsTableComponent do
         <div class="timestamp-axis">
           <h3 style="text-align: center"> Time (UTC) </h3>
         </div>
-        <section class="swimlanes fluid-group scrollable" id="pid-axis">
+        <section class="swimlanes fluid-group hide-scrollbar" id="pid-axis">
           <%= for pid <- @pids do %>
             <div class="swimlanes__title">
               <h3 style="text-align:center">PID <%= pid %></h3>
@@ -25,13 +25,13 @@ defmodule FishermanServerWeb.Live.ShellRecordsTableComponent do
 
       <!-- columns -->
       <div class="flexbox-wrapper">
-        <div id="time-axis" class="vertical-scrollbox scrollable timestamp-axis">
+        <div id="time-axis" class="vertical-scrollbox hide-scrollbar timestamp-axis">
           <%= live_component @socket,
             FishermanServerWeb.Live.ShellRecordsTable.TimeAxisComponent,
             row_info: @row_info %>
         </div>
         <div class="vertical-scrollbox fluid-group">
-          <section class="swimlanes scrollable" id="shellfeed-content">
+          <section class="swimlanes" id="shellfeed-content">
             <%= for pid <- @pids do %>
               <%= live_component @socket,
                 FishermanServerWeb.Live.ShellRecordsTable.PidColumnComponent,

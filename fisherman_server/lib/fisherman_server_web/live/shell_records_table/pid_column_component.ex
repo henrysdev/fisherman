@@ -7,7 +7,9 @@ defmodule FishermanServerWeb.Live.ShellRecordsTable.PidColumnComponent do
 
   def render(assigns) do
     ~L"""
-    <div class="swimlanes__column">
+    <div class="swimlanes__column"
+      style="min-height:<%= calc_col_height(@row_info) %>rem;
+      max-height:<%= calc_col_height(@row_info) %>rem">
       <%= for record <- @records do %>
         <%= live_component @socket,
           FishermanServerWeb.Live.ShellRecordsTable.ShellRecordComponent,
@@ -60,5 +62,9 @@ defmodule FishermanServerWeb.Live.ShellRecordsTable.PidColumnComponent do
     record_time_area = error_ts - command_ts
     area_ratio = record_time_area / total_time_area
     max(area_ratio * total_col_area, min_record_height)
+  end
+
+  def calc_col_height(%{num_rows: num_rows, row_height: row_height}) do
+    num_rows * row_height
   end
 end

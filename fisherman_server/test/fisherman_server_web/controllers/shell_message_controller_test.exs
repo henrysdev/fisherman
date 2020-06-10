@@ -1,10 +1,9 @@
 defmodule FishermanServerWeb.ShellMessageControllerTest do
   use FishermanServerWeb.ConnCase
-
-  alias FishermanServer.TestFns
+  import FishermanServer.TestFns
 
   test "POST /api/shellmsg", %{conn: conn} do
-    %FishermanServer.User{uuid: user_id} = TestFns.add_user!()
+    %FishermanServer.User{uuid: user_id} = add_user!()
 
     conn =
       post(conn, "/api/shellmsg", %{
@@ -28,7 +27,7 @@ defmodule FishermanServerWeb.ShellMessageControllerTest do
   end
 
   test "POST /api/shellmsg should raise error due to no pid", %{conn: conn} do
-    %FishermanServer.User{uuid: user_id} = TestFns.add_user!()
+    %FishermanServer.User{uuid: user_id} = add_user!()
 
     resp =
       try do

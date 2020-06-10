@@ -1,7 +1,6 @@
 defmodule FishermanServerWeb.PageControllerTest do
   use FishermanServerWeb.ConnCase
-
-  alias FishermanServer.TestFns
+  import FishermanServer.TestFns
 
   test "GET /", %{conn: conn} do
     conn = get(conn, "/")
@@ -9,7 +8,7 @@ defmodule FishermanServerWeb.PageControllerTest do
   end
 
   test "GET /shellfeed with valid user query param", %{conn: conn} do
-    user = TestFns.add_user!()
+    user = add_user!()
 
     conn =
       get(conn, "/shellfeed", %{

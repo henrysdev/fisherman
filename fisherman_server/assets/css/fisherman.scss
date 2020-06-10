@@ -1,3 +1,25 @@
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
+  overflow: hidden;
+}
+
+.flexbox-wrapper{
+  display: flex;
+}
+
+.fluid-group{
+  flex-grow: 1;
+}
+
+.pid-column-headers {
+  position: sticky;
+  top: 10px;
+}
+
+.vertical-scrollbox {
+  max-height: 68vh;
+  overflow-y: scroll;
+}
 
 .shell-record {
     position: absolute;
@@ -9,8 +31,10 @@
     // box-shadow: 2px 2px 4px 1px #888888;
 }
 
-.time-axis {
+.timestamp-axis {
   margin: 0.5rem;
+  width: 22rem;
+  min-width: 22rem;
 }
 
 .time-tick {
@@ -33,31 +57,17 @@
       border-radius: 0.5rem;
       margin: 0.5rem;
     }
-    
-    /*  nuke the ULs inherited margin and padding  */  
-    &__list {
-      padding: 0;
-      margin: 0;
-    }
-    
-    /*  overwrite the LIs inherited list-style-type, margin and padding and add background and border-radius */
-    &__listItem {
-      list-style-type: none;
-      margin: 0.5rem 0;
-      padding: 1rem;
-      background: #FFF;
-      border-radius: 0.25rem;
-    }
 
     &__title {
-        color: blue;
-        min-width: 15rem; /* this is what makes the concept legible when there are many swimlanes */
-        flex: 1;  /* to keep everything equally sized */
-        background: #F2F2F3;  /* replace with casper color variable */
-        padding: 0.5rem;
-        border-radius: 0.5rem 0.5rem 0 0;
-        margin: 0.5rem;
-        }
+      position: sticky;
+      color: blue;
+      min-width: 15rem; /* this is what makes the concept legible when there are many swimlanes */
+      flex: 1;  /* to keep everything equally sized */
+      background: #F2F2F3;  /* replace with casper color variable */
+      padding: 0.5rem;
+      border-radius: 0.5rem 0.5rem 0 0;
+      margin: 0.5rem;
+    }
   }
   
   /* From 48rem and up we switch the flex-direction to row for horizontally stacked swimlanes */

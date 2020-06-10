@@ -1,20 +1,27 @@
 defmodule FishermanServerWeb.ShellFeedLive do
-  use Phoenix.LiveView
+  @moduledoc """
+  Entry point for shell feed liveview. Mounts a liveview that
+  registers as a subscriber to the user whos history is being
+  recorded.
 
+  The subscriber gets a change-data-capture notify event
+  when a new shell record for a relevant user has been inserted,
+  at which point the view is refreshed.
+  """
+  use Phoenix.LiveView
   alias FishermanServer.DB
 
   @min_rows 3
   @min_record_height 2.5
   @row_height 3.5
   @pid_col_width 20.0
-  @time_incr 5_000
-  @time_axis_width 20
+  @time_incr 1_000
 
   def render(assigns) do
     ~L"""
     <%= live_component @socket,
         FishermanServerWeb.Live.ShellRecordsTableComponent,
-        pids: @state.records |> Enum.map(&(&1.pid)) |> Enum.uniq(),
+        pids: active_shells(@state.records),
         records: @state.records,
         row_info: @state.row_info %>
     """
@@ -63,7 +70,6 @@ defmodule FishermanServerWeb.ShellFeedLive do
         row_height: @row_height,
         pid_col_width: @pid_col_width,
         time_incr: @time_incr,
-        time_axis_width: @time_axis_width,
         min_record_height: @min_record_height
       }
     }
@@ -71,11 +77,13 @@ defmodule FishermanServerWeb.ShellFeedLive do
 
   defp calc_ticks(latest_ts, first_ts, time_incr) do
     delta = abs(first_ts - latest_ts)
-    ticks = div(delta, time_incr) |> max(@min_rows)
-    # IO.inspect({:LATEST_TS, latest_ts})
-    # IO.inspect({:FIRST_TS, first_ts})
-    # IO.inspect({:DELTA, delta})
-    # IO.inspect({:TICKS, ticks})
-    ticks
+    div(delta, time_incr) |> max(@min_rows)
+  end
+
+  defp active_shells(records) do
+    records
+    |> Enum.map(& &1.pid)
+    |> Enum.uniq()
+    |> Enum.sort()
   end
 end

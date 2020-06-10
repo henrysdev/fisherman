@@ -17,7 +17,26 @@ import "phoenix_html"
 import {Socket} from "phoenix"
 import LiveSocket from "phoenix_live_view"
 
+let Hooks = {}
+Hooks.ScrollAdjust = {
+  mounted(){
+    const container = document.querySelector('#shellfeed-content');
+    const pidAxis = document.querySelector('#pid-axis');
+    const timeAxis = document.querySelector('#time-axis');
+    container.addEventListener("scroll", _ => {
+      pidAxis.scrollTo(container.scrollLeft, pidAxis.scrollTop);
+      timeAxis.scrollTo(timeAxis.scrollLeft, container.scrollTop);
+    });
+    pidAxis.addEventListener("scroll", _ => {
+      container.scrollTo(pidAxis.scrollLeft, container.scrollTop);
+    });
+    timeAxis.addEventListener("scroll", _ => {
+      container.scrollTo(container.scrollLeft, timeAxis.scrollTop);
+    });
+  },
+}
+
 let csrfToken = document.querySelector("meta[name='csrf-token']").getAttribute("content");
-let liveSocket = new LiveSocket("/live", Socket, {params: {_csrf_token: csrfToken}});
+let liveSocket = new LiveSocket("/live", Socket, {hooks: Hooks, params: {_csrf_token: csrfToken}});
 liveSocket.connect()
 window.liveSocket = liveSocket

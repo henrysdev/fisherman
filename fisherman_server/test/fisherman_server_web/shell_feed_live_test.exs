@@ -1,24 +1,41 @@
 defmodule FishermanServerWeb.ShellFeedLiveTest do
   use FishermanServerWeb.ConnCase
-  import FishermanServerWeb.ChannelCase
+  import FishermanServer.TestFns
+  import Phoenix.LiveViewTest
 
-  alias FishermanServer.TestFns
+  test "renders shell feed with records", %{conn: conn} do
+    %{uuid: user_id} = add_user!()
 
-  test "renders expected feed", %{conn: conn} do
-    conn = get(conn, "/shellfeed")
-    assert html_response(conn, 200) =~ "Welcome to Phoenix!"
+    record =
+      gen_shell_record()
+      |> Map.put(:user_id, user_id)
+      |> add_shell_record!()
+
+    conn = get(conn, "/shellfeed", %{"user_id" => user_id})
+    {:ok, view, _html} = live(conn)
+    notif = %{"command_timestamp" => DateTime.utc_now(), "user_id" => user_id}
+    send(view.pid, {:notify, notif})
+
+    assert render(view) =~ record.command
+    assert render(view) =~ record.pid
+    default_assertions(view)
+    assert view |> element(".shell-record") |> has_element?()
   end
 
-  test "GET /shellfeed with valid user query param", %{conn: conn} do
-    user = TestFns.add_user!()
+  test "renders empty shell feed", %{conn: conn} do
+    %{uuid: user_id} = add_user!()
 
-    conn =
-      get(conn, "/shellfeed", %{
-        "user_id" => user.uuid
-      })
+    conn = get(conn, "/shellfeed", %{"user_id" => user_id})
+    {:ok, view, _html} = live(conn)
 
-    # TODO simulate refresh and assert html contents
+    default_assertions(view)
+  end
 
-    assert html_response(conn, 200) =~ "Time (UTC)"
+  defp default_assertions(view) do
+    assert view |> element("#shellfeed-content") |> has_element?()
+    assert view |> element("#pid-axis") |> has_element?()
+    assert view |> element("#time-axis") |> has_element?()
+    assert view |> element(".timestamp-axis") |> has_element?()
+    assert view |> element(".time-tick") |> has_element?()
   end
 end

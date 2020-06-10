@@ -1,4 +1,4 @@
-defmodule FishermanServerWeb.Live.ShellRecordsTable.TimeAxisComponent do
+defmodule FishermanServerWeb.Live.LinearShellsTable.TimeAxisComponent do
   @moduledoc """
   Component for the vertical time axis for the shell record table
   """

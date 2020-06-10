@@ -7,15 +7,28 @@ defmodule FishermanServerWeb.PageController do
   end
 
   @doc """
-  Renders live view shell activity feed for the given user
+  Renders linear
   """
-  def shellfeed(conn, %{"user_id" => user_id}) do
-    live_render(conn, FishermanServerWeb.ShellFeedLive,
-      session: %{
-        "user_id" => user_id,
-        "from_ts" => DateTime.utc_now() |> DateTime.add(-10, :second)
-      }
-    )
+  def shellfeed(conn, %{"user_id" => user_id, "view" => view}) do
+    history_buffer = DateTime.utc_now() |> DateTime.add(-10, :second)
+
+    case view do
+      "relative" ->
+        live_render(conn, FishermanServerWeb.Live.RelativeShellsTable,
+          session: %{
+            "user_id" => user_id,
+            "from_ts" => history_buffer
+          }
+        )
+
+      _linear ->
+        live_render(conn, FishermanServerWeb.Live.LinearShellsTable,
+          session: %{
+            "user_id" => user_id,
+            "from_ts" => history_buffer
+          }
+        )
+    end
   end
 
   def shellfeed(conn, _params) do

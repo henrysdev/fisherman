@@ -1,4 +1,4 @@
-defmodule FishermanServer.DB.Query do
+defmodule FishermanServer.Query do
   import Ecto.Query, warn: false
 
   alias FishermanServer.Repo

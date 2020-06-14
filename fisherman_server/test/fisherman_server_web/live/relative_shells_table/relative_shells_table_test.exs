@@ -41,6 +41,6 @@ defmodule FishermanServerWeb.Live.RelativeShellsTableTest do
   end
 
   defp default_assertions(view) do
-    assert view |> element("#relative-shells-table") |> has_element?()
+    assert view |> element(".grid") |> has_element?()
   end
 end

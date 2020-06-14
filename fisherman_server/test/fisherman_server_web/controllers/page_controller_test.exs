@@ -28,6 +28,6 @@ defmodule FishermanServerWeb.PageControllerTest do
         "view" => "relative"
       })
 
-    assert html_response(conn, 200) =~ "table"
+    assert html_response(conn, 200) =~ "grid"
   end
 end

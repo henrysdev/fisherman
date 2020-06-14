@@ -13,7 +13,7 @@ defmodule FishermanServerWeb.RelativeShellsTableComponentTest do
         "view" => "relative"
       })
 
-    assert html_response(conn, 200) =~ "relative-shells-table"
+    assert html_response(conn, 200) =~ "grid"
 
     {:ok, _view, _html} = live(conn)
   end

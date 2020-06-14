@@ -2,7 +2,7 @@ defmodule FishermanServer.QueryTest do
   use FishermanServer.DataCase
   import FishermanServer.TestFns
 
-  alias FishermanServer.DB.Query
+  alias FishermanServer.Query
 
   test "shell records since dt" do
     %{uuid: user_id} = add_user!()

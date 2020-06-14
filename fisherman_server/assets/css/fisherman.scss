@@ -1,4 +1,21 @@
-// Shell Records Table
+// Relative Shells Table
+.grid {
+  display: grid;
+  border-top: 1px solid black;
+  border-right: 1px solid black;
+  border-bottom: 1px solid black;
+  border-left: 1px solid black;
+  overflow: scroll;
+  max-height: 20rem;
+}
+
+.grid-cell {
+  padding: 8px 4px;
+  border-left: 1px solid black;
+  border-bottom: 1px solid black;
+}
+
+// Linear Shells Table
 .hide-scrollbar::-webkit-scrollbar {
   display: none;
   overflow: hidden;

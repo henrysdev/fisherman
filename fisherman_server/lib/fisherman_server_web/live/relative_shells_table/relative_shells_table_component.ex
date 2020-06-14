@@ -6,37 +6,39 @@ defmodule FishermanServerWeb.Live.RelativeShellsTable.RelativeShellsTableCompone
 
   def render(assigns) do
     ~L"""
-      <style>
-        .tcol {
-          width: <%= 100 / max(1, length(@pids)) %>%;
-        }
-      </style>
+      <!-- Sticky Headers -->
+      <div class="grid"
+        style="grid-template-columns: repeat(<%= length(@pids) %>, minmax(10rem, 400rem))">
+        <%= for pid <- @pids do %>
+          <div class="grid-cell"> PID <%= pid %> </div>
+        <% end %>
+      </div>
 
-      <table width="100%" border="1" id="relative-shells-table">
-
-        <tr>
-          <%= for pid <- @pids do %>
-            <th class="tcol">PID <%= pid %></th>
-          <% end %>
-        </tr>
-
-        <%= for idx <- 0..@row_info.num_rows * 2 do %>
-          <tr>
-            <%= for pid <- @pids do %>
-              <%= case row_content(@table_matrix, pid, idx) do %>
+      <!-- Grid Content -->
+      <div class="grid"
+        style="grid-template-columns: repeat(<%= length(@pids) %>, minmax(10rem, 400rem))">
+        <%= for row_idx <- 0..@row_info.num_rows * 2 do %>
+            <%= for {pid, col_idx} <- Enum.with_index(@pids) do %>
+              <%= case row_content(@table_matrix, pid, row_idx) do %>
                 <% {:start, cell_info} -> %>
-                  <td class="tcol" rowspan="<%= cell_info.fill_size %>" style="background-color: yellow">
-                    <%= Map.get(@records, cell_info.record_id).command %>
-                  </td>
+                  <%= live_component @socket,
+                    FishermanServerWeb.Live.RelativeShellsTable.ShellRecordComponent,
+                    record: Map.get(@records, cell_info.record_id),
+                    fill_size: cell_info.fill_size,
+                    x_idx: row_idx + 2,
+                    y_idx: col_idx + 1
+                  %>
                 <% :fill -> %>
                 <% _nofill -> %>
-                  <td>
-                  </td>
+                  <div class="grid-cell"
+                        style="grid-row: <%= row_idx + 2 %>;
+                        grid-column: <%= col_idx + 1 %> ">
+                    <br/>
+                  </div>
               <% end %>
             <% end %>
-          </tr>
         <% end %>
-      </table>
+      </div>
     """
   end
 

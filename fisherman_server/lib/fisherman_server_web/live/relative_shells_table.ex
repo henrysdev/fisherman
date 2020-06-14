@@ -24,7 +24,8 @@ defmodule FishermanServerWeb.Live.RelativeShellsTable do
         table_matrix: @state.table_matrix,
         pids: @state.pids,
         records: @state.records,
-        row_info: @state.row_info %>
+        row_info: @state.row_info,
+        slideout: @state.slideout %>
     """
   end
 
@@ -55,14 +56,25 @@ defmodule FishermanServerWeb.Live.RelativeShellsTable do
     # Pull feed records since time of executed command in notification
     first_ts = socket.assigns.state.row_info.first_ts
     sh_pid_store = socket.assigns.sh_pid_store
-    state = refresh_feed_state(first_ts, cmd_dt, user_id, sh_pid_store)
+    slideout = socket.assigns.state.slideout
+    state = refresh_feed_state(first_ts, cmd_dt, user_id, sh_pid_store, slideout)
     {:noreply, assign(socket, state: state)}
+  end
+
+  @doc """
+  Callback to inspect a selected shell history event
+  """
+  def handle_event("slideout_inspector", %{"record" => record_id}, socket) do
+    record = Map.get(socket.assigns.state.records, record_id)
+    state = Map.put(socket.assigns.state, :slideout, record)
+    socket = assign(socket, state: state)
+    {:noreply, socket}
   end
 
   @doc """
   Query for records since the given timestamp
   """
-  def refresh_feed_state(first_ts, _curr_dt, user_id, sh_pid_store) do
+  def refresh_feed_state(first_ts, _curr_dt, user_id, sh_pid_store, slideout \\ nil) do
     latest_ts = DateTime.utc_now() |> DateTime.to_unix(:millisecond)
     {:ok, user_uuid} = Ecto.UUID.dump(user_id)
 
@@ -89,7 +101,8 @@ defmodule FishermanServerWeb.Live.RelativeShellsTable do
         latest_ts: latest_ts,
         first_ts: first_ts,
         num_rows: length(records)
-      }
+      },
+      slideout: slideout
     }
   end
 end

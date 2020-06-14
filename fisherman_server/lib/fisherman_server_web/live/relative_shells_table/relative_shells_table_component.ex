@@ -6,8 +6,11 @@ defmodule FishermanServerWeb.Live.RelativeShellsTable.RelativeShellsTableCompone
 
   def render(assigns) do
     ~L"""
+      <!-- Hooks -->
+      <div phx-hook="RelativeScrollSync"/>
+
       <!-- Sticky Headers -->
-      <div class="grid"
+      <div class="grid hide-scrollbar" id="grid-pid-axis"
         style="grid-template-columns: repeat(<%= length(@pids) %>, minmax(10rem, 400rem))">
         <%= for pid <- @pids do %>
           <div class="grid-cell"> PID <%= pid %> </div>
@@ -15,7 +18,7 @@ defmodule FishermanServerWeb.Live.RelativeShellsTable.RelativeShellsTableCompone
       </div>
 
       <!-- Grid Content -->
-      <div class="grid"
+      <div class="grid" id="grid-content"
         style="grid-template-columns: repeat(<%= length(@pids) %>, minmax(10rem, 400rem))">
         <%= for row_idx <- 0..@row_info.num_rows * 2 do %>
             <%= for {pid, col_idx} <- Enum.with_index(@pids) do %>
@@ -39,6 +42,14 @@ defmodule FishermanServerWeb.Live.RelativeShellsTable.RelativeShellsTableCompone
             <% end %>
         <% end %>
       </div>
+
+      <!-- Slideout -->
+      <%= if @slideout != nil do %>
+        <%= live_component @socket,
+          FishermanServerWeb.Live.RelativeShellsTable.ShellRecordInspectorComponent,
+          record: @slideout
+        %>
+      <% end %>
     """
   end
 

@@ -10,7 +10,7 @@ defmodule FishermanServerWeb.Live.RelativeShellsTable.PIDControlComponent do
       PID <%= @pid %>
       <div class="flexbox-wrapper">
         <div>
-          Show
+          Hide
           <input class="fluid-group"
             type="checkbox"
             phx-click="toggle_pid_hide"

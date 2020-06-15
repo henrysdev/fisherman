@@ -14,10 +14,4 @@ defmodule FishermanServer.Utils do
     (millis <> "Z")
     |> Timex.Parse.DateTime.Parser.parse!("{ISO:Extended:Z}")
   end
-
-  def extract_pids(records) do
-    records
-    |> Enum.map(& &1.pid)
-    |> Enum.uniq()
-  end
 end

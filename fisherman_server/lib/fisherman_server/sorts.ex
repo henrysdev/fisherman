@@ -34,8 +34,8 @@ defmodule FishermanServer.Sorts do
                             },
                             acc ->
         [
-          %{ts: sm |> DateTime.to_unix(:millisecond), id: id, bound: 0},
-          %{ts: em |> DateTime.to_unix(:millisecond), id: id, bound: 1}
+          %{ts: DateTime.to_unix(sm, :millisecond), id: id, bound: 0},
+          %{ts: DateTime.to_unix(em, :millisecond), id: id, bound: 1}
           | acc
         ]
       end)
@@ -82,7 +82,7 @@ defmodule FishermanServer.Sorts do
         found_record = Map.get(record_lookup, r.id)
 
         # Pull out and update map
-        cell_map = Map.get(acc, found_record.pid)
+        cell_map = Map.get(acc, found_record.pid, %{})
 
         # Place in map with identifier to denote the start of a block
         # as well as how many spaces it will take up

@@ -14,7 +14,7 @@ defmodule FishermanServerWeb.Live.RelativeShellsTable.ShellRecordComponent do
       style="grid-row: <%= @x_idx %>/<%= @x_idx + @fill_size %>;
              grid-column: <%= @y_idx %>;
              background-color: <%= pick_color(@record) %>;"
-      phx-click="slideout_inspector" phx-value-record=<%= @record.uuid %> >
+      phx-click="slideout_inspector" phx-value-record_id=<%= @record.uuid %> >
         $ <code><%= @record.command %></code>
     </div>
     """

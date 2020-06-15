@@ -22,13 +22,13 @@ defmodule FishermanServerWeb.Live.RelativeShellsTable.RelativeShellsTableCompone
       <!-- Grid Content -->
       <div class="grid" id="grid-content"
         style="grid-template-columns: repeat(<%= length(@pids) %>, minmax(10rem, 400rem))">
-        <%= for row_idx <- 0..@row_info.num_rows * 2 do %>
+        <%= for row_idx <- 0..(length(Map.keys(@record_lookup)) * 2) do %>
             <%= for {pid, col_idx} <- Enum.with_index(@pids) do %>
               <%= case row_content(@table_matrix, pid, row_idx) do %>
                 <% {:start, cell_info} -> %>
                   <%= live_component @socket,
                     FishermanServerWeb.Live.RelativeShellsTable.ShellRecordComponent,
-                    record: Map.get(@records, cell_info.record_id),
+                    record: Map.get(@record_lookup, cell_info.record_id),
                     fill_size: cell_info.fill_size,
                     x_idx: row_idx + 2,
                     y_idx: col_idx + 1
@@ -44,14 +44,6 @@ defmodule FishermanServerWeb.Live.RelativeShellsTable.RelativeShellsTableCompone
             <% end %>
         <% end %>
       </div>
-
-      <!-- Slideout -->
-      <%= if @slideout != nil do %>
-        <%= live_component @socket,
-          FishermanServerWeb.Live.RelativeShellsTable.ShellRecordInspectorComponent,
-          record: @slideout
-        %>
-      <% end %>
     """
   end
 

@@ -12,84 +12,113 @@ defmodule FishermanServerWeb.Live.RelativeShellsTable do
 
   alias FishermanServer.{
     Query,
-    ShellPIDStore,
-    Sorts,
-    Utils
+    Sorts
   }
 
   def render(assigns) do
     ~L"""
     <%= live_component @socket,
         FishermanServerWeb.Live.RelativeShellsTable.RelativeShellsTableComponent,
-        table_matrix: @state.table_matrix,
-        pids: @state.pids,
-        records: @state.records,
-        row_info: @state.row_info,
-        slideout: @state.slideout %>
+        table_matrix: @table_matrix,
+        pids: @pids,
+        record_lookup: @record_lookup %>
+
+    <%= if @slideout_record != nil do %>
+      <%= live_component @socket,
+        FishermanServerWeb.Live.RelativeShellsTable.ShellRecordInspectorComponent,
+        record: @slideout_record
+      %>
+    <% end %>
     """
   end
 
-  def mount(_params, %{"user_id" => user_id, "from_ts" => curr_dt} = _session, socket) do
-    # On mount, subscribe to appropriate feed
+  def mount(
+        _params,
+        %{"user_id" => user_id, "from_ts" => from_ts} = _session,
+        socket
+      ) do
+    # Subscribe to appropriate feed
     Phoenix.PubSub.subscribe(
       FishermanServer.PubSub,
       FishermanServer.NotificationPublisher.channel_name(user_id)
     )
 
-    # Use shell pid store agent to persist pid order across requests 
-    {:ok, sh_pid_store} = ShellPIDStore.start_link([])
-    socket = assign(socket, :sh_pid_store, sh_pid_store)
+    # Initialize socket assigns state
+    init_state = [
+      slideout_record: nil,
+      user_id: user_id,
+      pids: [],
+      first_ts: DateTime.to_unix(from_ts, :millisecond),
+      hidden_pids: MapSet.new()
+    ]
 
-    # Start live feed polling from current timestamp
-    first_ts = curr_dt |> DateTime.to_unix(:millisecond)
-    state = refresh_feed_state(first_ts, curr_dt, user_id, sh_pid_store)
-    {:ok, assign(socket, state: state)}
+    socket =
+      socket
+      |> assign(init_state)
+      |> refresh_records()
+      |> refresh_pids()
+      |> refresh_matrix_and_lookup()
+
+    {:ok, socket}
   end
 
   @doc """
-  Subscriber callback for postgres notify messages
+  Subscriber callback for incoming shell messages
   """
   def handle_info(
-        {:notify, %{"command_timestamp" => cmd_dt, "user_id" => user_id} = _notif},
+        {:notify, %{"command_timestamp" => _cmd_dt, "user_id" => _user_id} = _notif},
         socket
       ) do
-    # Pull feed records since time of executed command in notification
-    first_ts = socket.assigns.state.row_info.first_ts
-    sh_pid_store = socket.assigns.sh_pid_store
-    slideout = socket.assigns.state.slideout
-    state = refresh_feed_state(first_ts, cmd_dt, user_id, sh_pid_store, slideout)
-    {:noreply, assign(socket, state: state)}
-  end
+    socket =
+      socket
+      |> refresh_records()
+      |> refresh_pids()
+      |> refresh_matrix_and_lookup()
 
-  @doc """
-  Callback to inspect a selected shell history event
-  """
-  def handle_event("slideout_inspector", %{"record" => record_id}, socket) do
-    record = Map.get(socket.assigns.state.records, record_id)
-    state = Map.put(socket.assigns.state, :slideout, record)
-    socket = assign(socket, state: state)
     {:noreply, socket}
   end
 
   @doc """
   Callback to inspect a selected shell history event
   """
-  def handle_event("toggle_pid_hide", %{"pid" => pid}, socket) do
-    ShellPIDStore.hide_pid(socket.assigns.sh_pid_store, pid)
-    {:noreply, socket}
+  def handle_event(
+        "slideout_inspector",
+        %{"record_id" => record_id},
+        %{assigns: %{record_lookup: record_lookup}} = socket
+      ) do
+    {:noreply, assign(socket, slideout_record: Map.get(record_lookup, record_id))}
   end
 
   @doc """
-  Query for records since the given timestamp
+  Callback to inspect a selected shell history event
   """
-  def refresh_feed_state(first_ts, _curr_dt, user_id, sh_pid_store, slideout \\ nil) do
-    latest_ts = DateTime.utc_now() |> DateTime.to_unix(:millisecond)
+  def handle_event(
+        "toggle_pid_hide",
+        %{"pid" => pid},
+        %{assigns: %{hidden_pids: hidden_pids}} = socket
+      ) do
+    hidden_pids =
+      if MapSet.member?(hidden_pids, pid) do
+        MapSet.delete(hidden_pids, pid)
+      else
+        MapSet.put(hidden_pids, pid)
+      end
+
+    socket =
+      socket
+      |> assign(hidden_pids: hidden_pids)
+      |> refresh_pids()
+      |> refresh_matrix_and_lookup()
+
+    {:noreply, socket}
+  end
+
+  defp refresh_records(%{assigns: %{user_id: user_id, first_ts: first_ts}} = socket) do
     {:ok, user_uuid} = Ecto.UUID.dump(user_id)
-
-    first_dt = first_ts |> DateTime.from_unix!(:millisecond)
+    since_dt = DateTime.from_unix!(first_ts, :millisecond)
 
     records =
-      Query.shell_records_since_dt(first_dt, user_uuid)
+      Query.shell_records_since_dt(since_dt, user_uuid)
       |> Enum.sort(fn a, b ->
         case DateTime.compare(a.command_timestamp, b.command_timestamp) do
           :gt -> false
@@ -97,20 +126,26 @@ defmodule FishermanServerWeb.Live.RelativeShellsTable do
         end
       end)
 
-    record_pids = Utils.extract_pids(records)
-    pids = ShellPIDStore.update_and_get_pids(sh_pid_store, record_pids)
+    assign(socket, records: records)
+  end
+
+  defp refresh_pids(
+         %{assigns: %{records: records, pids: _old_pids, hidden_pids: hidden_pids}} = socket
+       ) do
+    pids =
+      records
+      |> Enum.map(& &1.pid)
+      |> Enum.uniq()
+      |> Enum.reject(&MapSet.member?(hidden_pids, &1))
+
+    assign(socket, pids: pids)
+  end
+
+  defp refresh_matrix_and_lookup(%{assigns: %{records: records, pids: pids}} = socket) do
     {table_matrix, record_lookup} = Sorts.build_table_matrix(records, pids)
 
-    %{
-      table_matrix: table_matrix,
-      pids: record_pids,
-      records: record_lookup,
-      row_info: %{
-        latest_ts: latest_ts,
-        first_ts: first_ts,
-        num_rows: length(records)
-      },
-      slideout: slideout
-    }
+    socket
+    |> assign(table_matrix: table_matrix)
+    |> assign(record_lookup: record_lookup)
   end
 end

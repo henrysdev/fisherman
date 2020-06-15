@@ -9,7 +9,8 @@ defmodule FishermanServer.Query do
         where:
           sh.error_timestamp >=
             datetime_add(^datetime, 0, "second") and
-            sh.user_id == ^user_id
+            sh.user_id == ^user_id,
+        order_by: [asc: :command_timestamp]
 
     Repo.all(query)
   end

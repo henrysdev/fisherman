@@ -108,7 +108,6 @@ defmodule FishermanServerWeb.Live.RelativeShellsTable do
       socket
       |> assign(hidden_pids: hidden_pids)
       |> refresh_pids()
-      |> refresh_matrix_and_lookup()
 
     {:noreply, socket}
   end

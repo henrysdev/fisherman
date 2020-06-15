@@ -72,6 +72,14 @@ defmodule FishermanServerWeb.Live.RelativeShellsTable do
   end
 
   @doc """
+  Callback to inspect a selected shell history event
+  """
+  def handle_event("toggle_pid_hide", %{"pid" => pid}, socket) do
+    ShellPIDStore.hide_pid(socket.assigns.sh_pid_store, pid)
+    {:noreply, socket}
+  end
+
+  @doc """
   Query for records since the given timestamp
   """
   def refresh_feed_state(first_ts, _curr_dt, user_id, sh_pid_store, slideout \\ nil) do

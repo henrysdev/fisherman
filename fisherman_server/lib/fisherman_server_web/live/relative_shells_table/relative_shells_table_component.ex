@@ -13,7 +13,9 @@ defmodule FishermanServerWeb.Live.RelativeShellsTable.RelativeShellsTableCompone
       <div class="grid hide-scrollbar" id="grid-pid-axis"
         style="grid-template-columns: repeat(<%= length(@pids) %>, minmax(10rem, 400rem))">
         <%= for pid <- @pids do %>
-          <div class="grid-cell"> PID <%= pid %> </div>
+          <%= live_component @socket,
+            FishermanServerWeb.Live.RelativeShellsTable.PIDControlComponent,
+            pid: pid %>
         <% end %>
       </div>
 

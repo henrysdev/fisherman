@@ -6,17 +6,13 @@ defmodule FishermanServerWeb.Live.RelativeShellsTable.PIDControlComponent do
 
   def render(assigns) do
     ~L"""
-    <div class="grid-cell">
-      PID <%= @pid %>
-      <div class="flexbox-wrapper">
-        <div>
-          Hide
-          <input class="fluid-group"
-            type="checkbox"
-            phx-click="toggle_pid_hide"
-            phx-value-pid=<%= @pid %>>
-        </div>
+    <div class="grid-header">
+      <div class="pid-hide-btn"
+        phx-click="hide_pid"
+        phx-value-pid=<%= @pid %>>
+          🚫
       </div>
+      <strong> PID <%= @pid %> </strong>
     </div>
     """
   end

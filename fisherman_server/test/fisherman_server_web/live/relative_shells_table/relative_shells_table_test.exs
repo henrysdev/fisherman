@@ -31,6 +31,7 @@ defmodule FishermanServerWeb.Live.RelativeShellsTableTest do
     |> table_assertions()
     |> record_assertions(records)
     |> inspector_assertions(records)
+    |> table_menu_assertions()
   end
 
   test "renders empty relative shell feed", %{conn: conn} do
@@ -69,7 +70,7 @@ defmodule FishermanServerWeb.Live.RelativeShellsTableTest do
       rendered_view =
         render_click(
           view,
-          :slideout_inspector,
+          :open_slideout,
           %{"record_id" => record.uuid}
         )
 
@@ -82,6 +83,16 @@ defmodule FishermanServerWeb.Live.RelativeShellsTableTest do
       assert rendered_view =~ "Execution Time"
     end)
 
+    view
+  end
+
+  defp table_menu_assertions(view) do
+    assert view |> element(".table-menu") |> has_element?()
+    assert view |> element(".table-menu-header") |> has_element?()
+    assert view |> element(".table-menu-content") |> has_element?()
+    rendered_view = render(view)
+
+    assert rendered_view =~ "ZSH Shell History"
     view
   end
 end

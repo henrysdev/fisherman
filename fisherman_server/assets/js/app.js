@@ -39,7 +39,7 @@ Hooks.ScrollAdjust = {
 Hooks.RelativeScrollSync = {
   mounted(){
     const container = document.querySelector('#grid-content');
-    const pidAxis = document.querySelector('#grid-pid-axis');
+    const pidAxis = document.querySelector('#grid-pid-headers');
     container.addEventListener("scroll", _ => {
       pidAxis.scrollTo(container.scrollLeft, pidAxis.scrollTop);
     });

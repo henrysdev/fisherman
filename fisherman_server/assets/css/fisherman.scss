@@ -1,23 +1,115 @@
-// Relative Shells Table
-.shell-record-content {
-  background-color: rgba(198, 198, 198, 0.591);
+// Table Menu
+.table-menu-close-btn {
+  position: absolute;
+  padding: 0.2rem;
+  margin: 0.2rem;
+  left: 0;
+  top: 0;
+}
+
+.table-menu-header {
+  border-bottom: 1px solid black;
+  background-color: #B8B8B8;
+  padding: 0.5rem;
+  border-radius: 0.4rem 0.4rem 0 0;
+}
+
+.table-menu-content {
+  background-color: #F5F5F5;
+  padding: 0.5rem;
+}
+
+.table-menu {
+  position: relative;
+  margin-right: 0.5rem;
+  overflow: hidden;
+  height: 100%;
+  border: 1px solid black;
+  border-radius: 0.4rem 0.4rem 0 0;
+}
+
+// Shell Inspector
+.shell-inspector-close-btn {
+  position: absolute;
+  padding: 0.2rem;
+  margin: 0.2rem;
+  right: 0;
+  top: 0;
+}
+
+.shell-inspector-header {
+  border-bottom: 1px solid black;
+  background-color: #B8B8B8;
+  padding: 0.5rem;
+  border-radius: 0.4rem 0.4rem 0 0;
+}
+
+.shell-inspector-content {
+  background-color: #F5F5F5;
+  padding: 0.5rem;
+}
+
+.shell-inspector {
+  position: relative;
+  margin-left: 0.5rem;
+  height: 100%;
+  border: 1px solid black;
+  border-radius: 0.4rem 0.4rem 0 0;
+  transition: flex 2s;
+}
+
+.feed-container {
+  flex: 3;
+  overflow: hidden;
 }
 
 .grid {
   display: grid;
   border-top: 1px solid black;
   border-right: 1px solid black;
-  border-bottom: 1px solid black;
-  border-left: 1px solid black;
   overflow: scroll;
-  max-height: 60rem;
+  max-height: 70vh;
+  background-color: #F5F5F5;
 }
 
 .grid-cell {
-  padding: 8px 4px;
+  padding: 0.5rem;
   border-left: 1px solid black;
   border-bottom: 1px solid black;
   overflow: hidden;
+}
+
+#grid-pid-headers {
+  border-radius: 0.4rem 0.4rem 0 0;
+}
+
+#grid-pid-headers div:last-child {
+  border-radius: 0 0.4rem 0 0;
+}
+
+#grid-pid-headers div:first-child {
+  border-radius: 0.4rem 0 0 0;
+}
+
+#grid-pid-headers div:only-child {
+  border-radius: 0.4rem 0.4rem 0 0;
+}
+
+.grid-header {
+  padding: 0.5rem;
+  position: relative;
+  border-left: 1px solid black;
+  overflow: hidden;
+  background-color: #B8B8B8;
+}
+
+.pid-hide-btn {
+  position: absolute;
+  padding: 0.2rem;
+  margin: 0.2rem;
+  right: 0;
+  top: 0;
+  text-align: center;
 }
 
 // Linear Shells Table
@@ -45,13 +137,11 @@
 }
 
 .shell-record {
-    position: absolute;
-    // overflow: scroll;
-    text-align: left;
-    border-radius: 4px;
-    width: 100%;
-    opacity: 88%;
-    // box-shadow: 2px 2px 4px 1px #888888;
+  position: absolute;
+  text-align: left;
+  border-radius: 4px;
+  width: 100%;
+  opacity: 88%;
 }
 
 .timestamp-axis {

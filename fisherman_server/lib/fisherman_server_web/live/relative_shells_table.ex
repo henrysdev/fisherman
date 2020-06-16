@@ -17,18 +17,29 @@ defmodule FishermanServerWeb.Live.RelativeShellsTable do
 
   def render(assigns) do
     ~L"""
-    <%= live_component @socket,
-        FishermanServerWeb.Live.RelativeShellsTable.RelativeShellsTableComponent,
-        table_matrix: @table_matrix,
-        pids: @pids,
-        record_lookup: @record_lookup %>
+      <div class="flexbox">
 
-    <%= if @slideout_record != nil do %>
-      <%= live_component @socket,
-        FishermanServerWeb.Live.RelativeShellsTable.ShellRecordInspectorComponent,
-        record: @slideout_record
-      %>
-    <% end %>
+        <!-- Table Menu -->
+        <%= live_component @socket,
+            FishermanServerWeb.Live.RelativeShellsTable.TableMenuComponent %>
+
+        <!-- Table -->
+        <%= live_component @socket,
+            FishermanServerWeb.Live.RelativeShellsTable.RelativeShellsTableComponent,
+            table_matrix: @table_matrix,
+            pids: @pids,
+            record_lookup: @record_lookup %>
+
+        <!-- Inspector Slideout -->
+        <%= if @slideout.record != nil do %>
+          <%= live_component @socket,
+            FishermanServerWeb.Live.RelativeShellsTable.ShellRecordInspectorComponent,
+            record: @slideout.record,
+            slide_width: @slideout.slide_width,
+            expanded?: @slideout.expanded?
+          %>
+        <% end %>
+      </div>
     """
   end
 
@@ -45,7 +56,11 @@ defmodule FishermanServerWeb.Live.RelativeShellsTable do
 
     # Initialize socket assigns state
     init_state = [
-      slideout_record: nil,
+      slideout: %{
+        expanded?: false,
+        slide_width: 1,
+        record: nil
+      },
       user_id: user_id,
       pids: [],
       first_ts: DateTime.to_unix(from_ts, :millisecond),
@@ -79,21 +94,44 @@ defmodule FishermanServerWeb.Live.RelativeShellsTable do
   end
 
   @doc """
-  Callback to inspect a selected shell history event
+  Callback to open the slideout inspector for the selected shell record
   """
   def handle_event(
-        "slideout_inspector",
+        "open_slideout",
         %{"record_id" => record_id},
         %{assigns: %{record_lookup: record_lookup}} = socket
       ) do
-    {:noreply, assign(socket, slideout_record: Map.get(record_lookup, record_id))}
+    slideout = %{
+      expanded?: true,
+      slide_width: 1,
+      record: Map.get(record_lookup, record_id)
+    }
+
+    {:noreply, assign(socket, slideout: slideout)}
+  end
+
+  @doc """
+  Callback to close the slideout inspector
+  """
+  def handle_event(
+        "close_slideout",
+        _params,
+        socket
+      ) do
+    slideout = %{
+      expanded?: false,
+      slide_width: 0,
+      record: nil
+    }
+
+    {:noreply, assign(socket, slideout: slideout)}
   end
 
   @doc """
   Callback to inspect a selected shell history event
   """
   def handle_event(
-        "toggle_pid_hide",
+        "hide_pid",
         %{"pid" => pid},
         %{assigns: %{hidden_pids: hidden_pids}} = socket
       ) do

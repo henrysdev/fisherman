@@ -36,6 +36,19 @@ Hooks.ScrollAdjust = {
   },
 }
 
+Hooks.RelativeScrollSync = {
+  mounted(){
+    const container = document.querySelector('#grid-content');
+    const pidAxis = document.querySelector('#grid-pid-headers');
+    container.addEventListener("scroll", _ => {
+      pidAxis.scrollTo(container.scrollLeft, pidAxis.scrollTop);
+    });
+    pidAxis.addEventListener("scroll", _ => {
+      container.scrollTo(pidAxis.scrollLeft, container.scrollTop);
+    });
+  },
+}
+
 let csrfToken = document.querySelector("meta[name='csrf-token']").getAttribute("content");
 let liveSocket = new LiveSocket("/live", Socket, {hooks: Hooks, params: {_csrf_token: csrfToken}});
 liveSocket.connect()

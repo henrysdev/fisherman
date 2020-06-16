@@ -1,6 +1,33 @@
 /* This file is for your main application css. */
-@import "./phoenix.css";
+// @import "./phoenix.css";
 @import "./fisherman.scss";
+
+button {
+  cursor: pointer;
+}
+
+code {
+  background:white;
+  border-radius:0.2rem;
+  font-size:86%;
+  margin:0 .2rem;
+  padding:.1rem;
+  white-space:nowrap;
+}
+
+body {
+  color:#000000;
+  font-family:'Helvetica', 'Arial', sans-serif;
+  font-size:1em;
+  font-weight:300;
+  line-height:1.6;
+}
+
+.flexbox {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+}
 
 /* Alerts and form errors */
 .alert {

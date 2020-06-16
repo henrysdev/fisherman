@@ -15,9 +15,18 @@ defmodule FishermanServer.Utils do
     |> Timex.Parse.DateTime.Parser.parse!("{ISO:Extended:Z}")
   end
 
-  def extract_pids(records) do
-    records
-    |> Enum.map(& &1.pid)
-    |> Enum.uniq()
+  @doc """
+  Determines color of the shell record background on basis
+  of if the command produced an error or not
+  """
+  @no_error_color "#a0cf93"
+  @error_color "#f79292"
+
+  def pick_color(%{error: error}) do
+    if Enum.member?(["", nil], error) do
+      @no_error_color
+    else
+      @error_color
+    end
   end
 end

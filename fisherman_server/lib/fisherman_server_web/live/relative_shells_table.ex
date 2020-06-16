@@ -21,7 +21,8 @@ defmodule FishermanServerWeb.Live.RelativeShellsTable do
 
         <!-- Table Menu -->
         <%= live_component @socket,
-            FishermanServerWeb.Live.RelativeShellsTable.TableMenuComponent %>
+            FishermanServerWeb.Live.RelativeShellsTable.TableMenuComponent,
+            hidden_pids: @hidden_pids %>
 
         <!-- Table -->
         <%= live_component @socket,
@@ -128,10 +129,10 @@ defmodule FishermanServerWeb.Live.RelativeShellsTable do
   end
 
   @doc """
-  Callback to inspect a selected shell history event
+  Callback to hide a pid column
   """
   def handle_event(
-        "hide_pid",
+        "toggle_pid",
         %{"pid" => pid},
         %{assigns: %{hidden_pids: hidden_pids}} = socket
       ) do
@@ -147,6 +148,14 @@ defmodule FishermanServerWeb.Live.RelativeShellsTable do
       |> assign(hidden_pids: hidden_pids)
       |> refresh_pids()
 
+    {:noreply, socket}
+  end
+
+  @doc """
+  Callback to inspect a selected shell history event
+  """
+  def handle_event("records_query", params, socket) do
+    IO.inspect({:UPDATE_RECORDS_QUERY, params})
     {:noreply, socket}
   end
 

@@ -8,7 +8,7 @@ defmodule FishermanServerWeb.Live.RelativeShellsTable.PIDControlComponent do
     ~L"""
     <div class="grid-header">
       <div class="pid-hide-btn"
-        phx-click="hide_pid"
+        phx-click="toggle_pid"
         phx-value-pid=<%= @pid %>>
           🚫
       </div>

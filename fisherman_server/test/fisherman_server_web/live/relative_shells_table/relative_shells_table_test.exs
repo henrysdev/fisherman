@@ -17,6 +17,11 @@ defmodule FishermanServerWeb.Live.RelativeShellsTableTest do
       |> add_shell_record!()
     ]
 
+    pids =
+      records
+      |> Enum.map(& &1.pid)
+      |> Enum.uniq()
+
     conn =
       get(conn, "/shellfeed", %{
         "user_id" => user_id,
@@ -31,7 +36,7 @@ defmodule FishermanServerWeb.Live.RelativeShellsTableTest do
     |> table_assertions()
     |> record_assertions(records)
     |> inspector_assertions(records)
-    |> table_menu_assertions()
+    |> table_menu_assertions(pids)
   end
 
   test "renders empty relative shell feed", %{conn: conn} do
@@ -86,13 +91,36 @@ defmodule FishermanServerWeb.Live.RelativeShellsTableTest do
     view
   end
 
-  defp table_menu_assertions(view) do
+  defp table_menu_assertions(view, pids_to_toggle) do
     assert view |> element(".table-menu") |> has_element?()
     assert view |> element(".table-menu-header") |> has_element?()
     assert view |> element(".table-menu-content") |> has_element?()
-    rendered_view = render(view)
+    assert view |> element(".table-query-builder") |> has_element?()
 
-    assert rendered_view =~ "ZSH Shell History"
+    Enum.each(pids_to_toggle, fn pid ->
+      # Toggle pid (hide)
+      rendered_view =
+        render_click(
+          view,
+          :toggle_pid,
+          %{"pid" => pid}
+        )
+
+      assert rendered_view =~ "ZSH Shell History"
+      assert !(rendered_view =~ "PID #{pid}")
+      assert rendered_view =~ pid
+
+      # Toggle pid (unhide)
+      rendered_view =
+        render_click(
+          view,
+          :toggle_pid,
+          %{"pid" => pid}
+        )
+
+      assert rendered_view =~ "PID #{pid}"
+    end)
+
     view
   end
 end

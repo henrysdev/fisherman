@@ -9,10 +9,12 @@ defmodule FishermanServerWeb.Live.RelativeShellsTable do
   at which point the view is refreshed.
   """
   use Phoenix.LiveView
+  alias FishermanServerWeb.Router.Helpers, as: Routes
 
   alias FishermanServer.{
     Query,
-    Sorts
+    Sorts,
+    Utils
   }
 
   def render(assigns) do
@@ -44,11 +46,11 @@ defmodule FishermanServerWeb.Live.RelativeShellsTable do
     """
   end
 
-  def mount(
-        _params,
-        %{"user_id" => user_id, "from_ts" => from_ts} = _session,
-        socket
-      ) do
+  def mount(_arg, _session, socket) do
+    {:ok, socket}
+  end
+
+  def handle_params(%{"user_id" => user_id, "start_time" => start_time}, _uri, socket) do
     # Subscribe to appropriate feed
     Phoenix.PubSub.subscribe(
       FishermanServer.PubSub,
@@ -64,7 +66,7 @@ defmodule FishermanServerWeb.Live.RelativeShellsTable do
       },
       user_id: user_id,
       pids: [],
-      first_ts: DateTime.to_unix(from_ts, :millisecond),
+      start_time: Utils.decode_url_datetime(start_time),
       hidden_pids: MapSet.new()
     ]
 
@@ -75,7 +77,7 @@ defmodule FishermanServerWeb.Live.RelativeShellsTable do
       |> refresh_pids()
       |> refresh_matrix_and_lookup()
 
-    {:ok, socket}
+    {:noreply, socket}
   end
 
   @doc """
@@ -154,17 +156,24 @@ defmodule FishermanServerWeb.Live.RelativeShellsTable do
   @doc """
   Callback to inspect a selected shell history event
   """
-  def handle_event("records_query", params, socket) do
-    IO.inspect({:UPDATE_RECORDS_QUERY, params})
-    {:noreply, socket}
+  def handle_event("records_query", _form_fields, socket) do
+    # TODO use form fields
+    {:noreply,
+     push_redirect(
+       socket,
+       to:
+         Routes.live_path(socket, __MODULE__, %{
+           user_id: socket.assigns.user_id,
+           start_time: Utils.encode_url_datetime()
+         })
+     )}
   end
 
-  defp refresh_records(%{assigns: %{user_id: user_id, first_ts: first_ts}} = socket) do
+  defp refresh_records(%{assigns: %{user_id: user_id, start_time: start_time}} = socket) do
     {:ok, user_uuid} = Ecto.UUID.dump(user_id)
-    since_dt = DateTime.from_unix!(first_ts, :millisecond)
 
     records =
-      Query.shell_records_since_dt(since_dt, user_uuid)
+      Query.shell_records_since_dt(start_time, user_uuid)
       |> Enum.sort(fn a, b ->
         case DateTime.compare(a.command_timestamp, b.command_timestamp) do
           :gt -> false

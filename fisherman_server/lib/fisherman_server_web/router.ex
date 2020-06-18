@@ -8,6 +8,7 @@ defmodule FishermanServerWeb.Router do
     plug :fetch_flash
     plug :protect_from_forgery
     plug :put_secure_browser_headers
+    plug :put_root_layout, {FishermanServerWeb.LayoutView, :app}
   end
 
   pipeline :api do
@@ -20,6 +21,8 @@ defmodule FishermanServerWeb.Router do
 
     get "/", PageController, :index
     get "/shellfeed", PageController, :shellfeed
+
+    live "/history", Live.RelativeShellsTable
   end
 
   # Endpoints for JSON API

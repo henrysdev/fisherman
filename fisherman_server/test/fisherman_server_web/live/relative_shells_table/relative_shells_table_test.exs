@@ -2,9 +2,11 @@ defmodule FishermanServerWeb.Live.RelativeShellsTableTest do
   use FishermanServerWeb.ConnCase
   import FishermanServer.TestFns
   import Phoenix.LiveViewTest
+  alias FishermanServer.Utils
 
   test "renders relative shell feed with records and click actions", %{conn: conn} do
     %{uuid: user_id} = add_user!()
+    start_time = Utils.encode_url_datetime()
 
     records = [
       gen_shell_record()
@@ -22,13 +24,7 @@ defmodule FishermanServerWeb.Live.RelativeShellsTableTest do
       |> Enum.map(& &1.pid)
       |> Enum.uniq()
 
-    conn =
-      get(conn, "/shellfeed", %{
-        "user_id" => user_id,
-        "view" => "relative"
-      })
-
-    {:ok, view, _html} = live(conn)
+    {:ok, view, _html} = live(conn, "history?user_id=#{user_id}&start_time=#{start_time}")
     notif = %{"command_timestamp" => DateTime.utc_now(), "user_id" => user_id}
     send(view.pid, {:notify, notif})
 
@@ -41,14 +37,9 @@ defmodule FishermanServerWeb.Live.RelativeShellsTableTest do
 
   test "renders empty relative shell feed", %{conn: conn} do
     %{uuid: user_id} = add_user!()
+    start_time = Utils.encode_url_datetime()
 
-    conn =
-      get(conn, "/shellfeed", %{
-        "user_id" => user_id,
-        "view" => "relative"
-      })
-
-    {:ok, view, _html} = live(conn)
+    {:ok, view, _html} = live(conn, "history?user_id=#{user_id}&start_time=#{start_time}")
 
     table_assertions(view)
   end

@@ -16,6 +16,20 @@ defmodule FishermanServer.Utils do
   end
 
   @doc """
+  Encode the given datetime to be url safe. Use current utc time if not specified
+  """
+  def encode_url_datetime(datetime \\ DateTime.utc_now()) do
+    datetime
+    |> DateTime.to_unix(:millisecond)
+    |> to_string()
+  end
+
+  def decode_url_datetime(url_datetime) do
+    {millis, _} = Integer.parse(url_datetime)
+    DateTime.from_unix!(millis, :millisecond)
+  end
+
+  @doc """
   Determines color of the shell record background on basis
   of if the command produced an error or not
   """

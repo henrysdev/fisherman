@@ -13,14 +13,6 @@ defmodule FishermanServerWeb.PageController do
     history_buffer = DateTime.utc_now() |> DateTime.add(-10, :second)
 
     case view do
-      "relative" ->
-        live_render(conn, FishermanServerWeb.Live.RelativeShellsTable,
-          session: %{
-            "user_id" => user_id,
-            "from_ts" => history_buffer
-          }
-        )
-
       _linear ->
         live_render(conn, FishermanServerWeb.Live.LinearShellsTable,
           session: %{

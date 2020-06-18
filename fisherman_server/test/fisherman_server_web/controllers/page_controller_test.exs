@@ -18,16 +18,4 @@ defmodule FishermanServerWeb.PageControllerTest do
 
     assert html_response(conn, 200) =~ "Time (UTC)"
   end
-
-  test "GET /shellfeed relative feed", %{conn: conn} do
-    user = add_user!()
-
-    conn =
-      get(conn, "/shellfeed", %{
-        "user_id" => user.uuid,
-        "view" => "relative"
-      })
-
-    assert html_response(conn, 200) =~ "grid"
-  end
 end

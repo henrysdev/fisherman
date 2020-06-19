@@ -19,24 +19,17 @@ defmodule FishermanServerWeb.Live.RelativeShellsTable.TableMenuComponent do
             <form phx-submit="records_query">
               <!-- Time Range -->
               <fieldset>
-                <legend>Start Time</legend>
-                <%= datetime_select :query, :start_time, builder: fn b -> %>
+                <legend>Jump to</legend>
+                <%= datetime_select :query, :start_time, default: @start_time, builder: fn b -> %>
                   Date: <%= b.(:day, []) %> / <%= b.(:month, []) %> / <%= b.(:year, []) %>
                   Time: <%= b.(:hour, []) %> : <%= b.(:minute, []) %> : <%= b.(:second, []) %>
                 <% end %>
               </fieldset>
               <fieldset>
-                <legend>End Time</legend>
-              <%= datetime_select :query, :end_time, builder: fn b -> %>
-                Date: <%= b.(:day, []) %> / <%= b.(:month, []) %> / <%= b.(:year, []) %>
-                Time: <%= b.(:hour, []) %> : <%= b.(:minute, []) %> : <%= b.(:second, []) %>
-              <% end %>
-              </fieldset>
-              <fieldset>
                 <legend>Options</legend>
                 <div>
                   Include Errors
-                  <%= checkbox :query, :inc_errors, value: true %>
+                  <%= checkbox :query, :include_errors, value: @include_errors %>
                 </div>
               </fieldset>
               <%= submit "Update Chart", class: "query-submit-btn", phx_disable_with: "Submitting..." %>

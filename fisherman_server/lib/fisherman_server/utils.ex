@@ -78,6 +78,9 @@ defmodule FishermanServer.Utils do
     int
   end
 
+  def string_to_bool("true"), do: true
+  def string_to_bool("false"), do: false
+
   @doc """
   Cast the map produces from a date select form field to a url safe datetime string
   """

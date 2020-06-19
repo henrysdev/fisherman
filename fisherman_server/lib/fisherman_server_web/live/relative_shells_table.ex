@@ -50,32 +50,14 @@ defmodule FishermanServerWeb.Live.RelativeShellsTable do
     {:ok, socket}
   end
 
+  ### Handle Callbacks ###
+
   def handle_params(%{"user_id" => user_id, "start_time" => start_time}, _uri, socket) do
-    # Subscribe to appropriate feed
-    Phoenix.PubSub.subscribe(
-      FishermanServer.PubSub,
-      FishermanServer.NotificationPublisher.channel_name(user_id)
-    )
-
-    # Initialize socket assigns state
-    init_state = [
-      slideout: %{
-        expanded?: false,
-        slide_width: 1,
-        record: nil
-      },
-      user_id: user_id,
-      pids: [],
-      start_time: Utils.decode_url_datetime(start_time),
-      hidden_pids: MapSet.new()
-    ]
-
     socket =
-      socket
-      |> assign(init_state)
-      |> refresh_records()
-      |> refresh_pids()
-      |> refresh_matrix_and_lookup()
+      refresh(socket, %{
+        user_id: user_id,
+        start_time: start_time
+      })
 
     {:noreply, socket}
   end
@@ -104,13 +86,14 @@ defmodule FishermanServerWeb.Live.RelativeShellsTable do
         %{"record_id" => record_id},
         %{assigns: %{record_lookup: record_lookup}} = socket
       ) do
-    slideout = %{
-      expanded?: true,
-      slide_width: 1,
-      record: Map.get(record_lookup, record_id)
-    }
-
-    {:noreply, assign(socket, slideout: slideout)}
+    {:noreply,
+     assign(socket,
+       slideout: %{
+         expanded?: true,
+         slide_width: 1,
+         record: Map.get(record_lookup, record_id)
+       }
+     )}
   end
 
   @doc """
@@ -121,13 +104,14 @@ defmodule FishermanServerWeb.Live.RelativeShellsTable do
         _params,
         socket
       ) do
-    slideout = %{
-      expanded?: false,
-      slide_width: 0,
-      record: nil
-    }
-
-    {:noreply, assign(socket, slideout: slideout)}
+    {:noreply,
+     assign(socket,
+       slideout: %{
+         expanded?: false,
+         slide_width: 0,
+         record: nil
+       }
+     )}
   end
 
   @doc """
@@ -167,6 +151,35 @@ defmodule FishermanServerWeb.Live.RelativeShellsTable do
            start_time: Utils.encode_url_datetime()
          })
      )}
+  end
+
+  ### Socket state helper methods ###
+
+  defp refresh(socket, %{user_id: user_id, start_time: start_time} = params) do
+    # Subscribe to appropriate feed
+    Phoenix.PubSub.subscribe(
+      FishermanServer.PubSub,
+      FishermanServer.NotificationPublisher.channel_name(user_id)
+    )
+
+    # Initialize socket assigns state
+    init_state = [
+      slideout: %{
+        expanded?: false,
+        slide_width: 1,
+        record: nil
+      },
+      user_id: user_id,
+      pids: [],
+      start_time: Utils.decode_url_datetime(start_time),
+      hidden_pids: MapSet.new()
+    ]
+
+    socket
+    |> assign(init_state)
+    |> refresh_records()
+    |> refresh_pids()
+    |> refresh_matrix_and_lookup()
   end
 
   defp refresh_records(%{assigns: %{user_id: user_id, start_time: start_time}} = socket) do

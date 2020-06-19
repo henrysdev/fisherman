@@ -4,18 +4,30 @@ defmodule FishermanServer.SortsTest do
 
   alias FishermanServer.{
     User,
+    ShellRecord,
     Sorts
   }
 
   test "interval sort" do
     %User{uuid: user_id} = add_user!()
-    intervals = gen_shell_records_for_user(3, user_id)
+
+    shell_records =
+      gen_shell_records_for_user(3, user_id) ++
+        [
+          gen_shell_record(
+            user_id: user_id,
+            uuid: Ecto.UUID.generate(),
+            command_timestamp: DateTime.utc_now() |> DateTime.add(2, :second),
+            error_timestamp: DateTime.utc_now() |> DateTime.add(4, :second)
+          )
+        ]
 
     assert [
              %{end: 3, start: 0},
              %{end: 4, start: 1},
-             %{end: 5, start: 2}
-           ] = Sorts.interval_sort(intervals)
+             %{end: 5, start: 2},
+             %{end: 7, start: 6}
+           ] = Sorts.interval_sort(shell_records)
   end
 
   test "build table matrix" do
@@ -24,8 +36,8 @@ defmodule FishermanServer.SortsTest do
     records = [gen_shell_record(user_id: user_id, pid: "def456") | records]
 
     [_ms1, _ms2] = [
-      MapSet.new([0, 1, 2, 3, 4, 5, 6]),
-      MapSet.new([3, 4, 5, 6, 7])
+      MapSet.new(0..6 |> Enum.to_list()),
+      MapSet.new(3..7 |> Enum.to_list())
     ]
 
     assert pattern =

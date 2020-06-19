@@ -52,6 +52,9 @@ defmodule FishermanServerWeb.Live.RelativeShellsTable do
 
   ### Handle Callbacks ###
 
+  @doc """
+  Entry point to view for accepting URL parameters
+  """
   def handle_params(%{"user_id" => user_id, "start_time" => start_time}, _uri, socket) do
     socket =
       refresh(socket, %{
@@ -140,22 +143,30 @@ defmodule FishermanServerWeb.Live.RelativeShellsTable do
   @doc """
   Callback to inspect a selected shell history event
   """
-  def handle_event("records_query", _form_fields, socket) do
-    # TODO use form fields
+  def handle_event(
+        "records_query",
+        %{"query" => %{"start_time" => start_time}} = _form_fields,
+        socket
+      ) do
+    start_time =
+      start_time
+      |> Utils.datetime_from_map()
+      |> Utils.encode_url_datetime()
+
     {:noreply,
      push_redirect(
        socket,
        to:
          Routes.live_path(socket, __MODULE__, %{
            user_id: socket.assigns.user_id,
-           start_time: Utils.encode_url_datetime()
+           start_time: start_time
          })
      )}
   end
 
   ### Socket state helper methods ###
 
-  defp refresh(socket, %{user_id: user_id, start_time: start_time} = params) do
+  defp refresh(socket, %{user_id: user_id, start_time: start_time} = _params) do
     # Subscribe to appropriate feed
     Phoenix.PubSub.subscribe(
       FishermanServer.PubSub,

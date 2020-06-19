@@ -4,7 +4,6 @@ defmodule FishermanServer.SortsTest do
 
   alias FishermanServer.{
     User,
-    ShellRecord,
     Sorts
   }
 

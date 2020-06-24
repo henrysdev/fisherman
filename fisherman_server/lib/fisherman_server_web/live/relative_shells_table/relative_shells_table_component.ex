@@ -50,10 +50,10 @@ defmodule FishermanServerWeb.Live.RelativeShellsTable.RelativeShellsTableCompone
     """
   end
 
-  defp row_content(cell_map, pid, order_idx) do
+  defp row_content(cell_map, pid, row_idx) do
     fill_lookup = cell_map |> Map.get(pid)
 
-    case Map.get(fill_lookup, order_idx) do
+    case Map.get(fill_lookup, row_idx) do
       {:start, cell_info} -> {:start, cell_info}
       :fill -> :fill
       _ -> nil

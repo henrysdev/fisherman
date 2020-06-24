@@ -9,10 +9,12 @@ defmodule FishermanServerWeb.Live.RelativeShellsTable do
   at which point the view is refreshed.
   """
   use Phoenix.LiveView
+  alias FishermanServerWeb.Router.Helpers, as: Routes
 
   alias FishermanServer.{
     Query,
-    Sorts
+    Sorts,
+    Utils
   }
 
   def render(assigns) do
@@ -22,7 +24,9 @@ defmodule FishermanServerWeb.Live.RelativeShellsTable do
         <!-- Table Menu -->
         <%= live_component @socket,
             FishermanServerWeb.Live.RelativeShellsTable.TableMenuComponent,
-            hidden_pids: @hidden_pids %>
+            hidden_pids: @hidden_pids,
+            start_time: @start_time,
+            include_errors: @include_errors %>
 
         <!-- Table -->
         <%= live_component @socket,
@@ -44,38 +48,27 @@ defmodule FishermanServerWeb.Live.RelativeShellsTable do
     """
   end
 
-  def mount(
-        _params,
-        %{"user_id" => user_id, "from_ts" => from_ts} = _session,
-        socket
-      ) do
-    # Subscribe to appropriate feed
-    Phoenix.PubSub.subscribe(
-      FishermanServer.PubSub,
-      FishermanServer.NotificationPublisher.channel_name(user_id)
-    )
+  def mount(_arg, _session, socket) do
+    {:ok, socket}
+  end
 
-    # Initialize socket assigns state
-    init_state = [
-      slideout: %{
-        expanded?: false,
-        slide_width: 1,
-        record: nil
-      },
-      user_id: user_id,
-      pids: [],
-      first_ts: DateTime.to_unix(from_ts, :millisecond),
-      hidden_pids: MapSet.new()
-    ]
+  ### Handle Callbacks ###
+
+  @doc """
+  Entry point to view for accepting URL parameters
+  """
+  def handle_params(%{"user_id" => user_id} = params, _uri, socket) do
+    start_time = Map.get(params, "start_time", Utils.encode_url_datetime())
+    include_errors = Map.get(params, "include_errors", "true") |> Utils.string_to_bool()
 
     socket =
-      socket
-      |> assign(init_state)
-      |> refresh_records()
-      |> refresh_pids()
-      |> refresh_matrix_and_lookup()
+      refresh(socket, %{
+        user_id: user_id,
+        start_time: start_time,
+        include_errors: include_errors
+      })
 
-    {:ok, socket}
+    {:noreply, socket}
   end
 
   @doc """
@@ -102,13 +95,14 @@ defmodule FishermanServerWeb.Live.RelativeShellsTable do
         %{"record_id" => record_id},
         %{assigns: %{record_lookup: record_lookup}} = socket
       ) do
-    slideout = %{
-      expanded?: true,
-      slide_width: 1,
-      record: Map.get(record_lookup, record_id)
-    }
-
-    {:noreply, assign(socket, slideout: slideout)}
+    {:noreply,
+     assign(socket,
+       slideout: %{
+         expanded?: true,
+         slide_width: 1,
+         record: Map.get(record_lookup, record_id)
+       }
+     )}
   end
 
   @doc """
@@ -119,13 +113,14 @@ defmodule FishermanServerWeb.Live.RelativeShellsTable do
         _params,
         socket
       ) do
-    slideout = %{
-      expanded?: false,
-      slide_width: 0,
-      record: nil
-    }
-
-    {:noreply, assign(socket, slideout: slideout)}
+    {:noreply,
+     assign(socket,
+       slideout: %{
+         expanded?: false,
+         slide_width: 0,
+         record: nil
+       }
+     )}
   end
 
   @doc """
@@ -154,17 +149,74 @@ defmodule FishermanServerWeb.Live.RelativeShellsTable do
   @doc """
   Callback to inspect a selected shell history event
   """
-  def handle_event("records_query", params, socket) do
-    IO.inspect({:UPDATE_RECORDS_QUERY, params})
-    {:noreply, socket}
+  def handle_event(
+        "records_query",
+        %{"query" => %{"start_time" => start_time, "include_errors" => include_errors}} =
+          form_fields,
+        socket
+      ) do
+    IO.inspect({:form_fields, form_fields})
+
+    start_time =
+      start_time
+      |> Utils.datetime_from_map()
+      |> Utils.encode_url_datetime()
+
+    include_errors = Utils.string_to_bool(include_errors)
+
+    {:noreply,
+     push_redirect(
+       socket,
+       to:
+         Routes.live_path(socket, __MODULE__, %{
+           user_id: socket.assigns.user_id,
+           start_time: start_time,
+           include_errors: include_errors
+         })
+     )}
   end
 
-  defp refresh_records(%{assigns: %{user_id: user_id, first_ts: first_ts}} = socket) do
+  ### Socket state helper methods ###
+
+  defp refresh(
+         socket,
+         %{user_id: user_id, start_time: start_time, include_errors: include_errors} = _params
+       ) do
+    # Subscribe to appropriate feed
+    Phoenix.PubSub.subscribe(
+      FishermanServer.PubSub,
+      FishermanServer.NotificationPublisher.channel_name(user_id)
+    )
+
+    # Initialize socket assigns state
+    init_state = [
+      slideout: %{
+        expanded?: false,
+        slide_width: 1,
+        record: nil
+      },
+      user_id: user_id,
+      pids: [],
+      start_time: Utils.decode_url_datetime(start_time),
+      include_errors: include_errors,
+      hidden_pids: MapSet.new()
+    ]
+
+    socket
+    |> assign(init_state)
+    |> refresh_records()
+    |> refresh_pids()
+    |> refresh_matrix_and_lookup()
+  end
+
+  defp refresh_records(
+         %{assigns: %{user_id: user_id, start_time: start_time, include_errors: include_errors}} =
+           socket
+       ) do
     {:ok, user_uuid} = Ecto.UUID.dump(user_id)
-    since_dt = DateTime.from_unix!(first_ts, :millisecond)
 
     records =
-      Query.shell_records_since_dt(since_dt, user_uuid)
+      Query.shell_records_since_dt(start_time, user_uuid, include_errors)
       |> Enum.sort(fn a, b ->
         case DateTime.compare(a.command_timestamp, b.command_timestamp) do
           :gt -> false

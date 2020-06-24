@@ -3,19 +3,13 @@ defmodule FishermanServerWeb.RelativeShellsTableComponentTest do
   import Phoenix.ConnTest
   import Phoenix.LiveViewTest
   import FishermanServer.TestFns
+  alias FishermanServer.Utils
 
   test "disconnected and connected mount", %{conn: conn} do
-    user = add_user!()
+    %{uuid: user_id} = add_user!()
+    start_time = Utils.encode_url_datetime()
 
-    conn =
-      get(conn, "/shellfeed", %{
-        "user_id" => user.uuid,
-        "view" => "relative"
-      })
-
-    assert html_response(conn, 200) =~ "grid"
-
-    {:ok, _view, _html} = live(conn)
+    {:ok, _view, _html} = live(conn, "history?user_id=#{user_id}&start_time=#{start_time}")
   end
 
   test "no session error on mount", %{conn: conn} do
